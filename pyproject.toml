@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "dataframe-of-mind"
+version = "0.1.0"
+description = ""
+authors = ["Wouter Gins <wouter.gins@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+Faker = "^24.8.0"
+polars = "^0.20.19"
+pyspark = "^3.5.1"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.1.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
