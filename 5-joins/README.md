@@ -5,12 +5,12 @@ Join tables:
 
 - vet dimension
 - sensor dimension
-- visitor dimension
+- visitor table
 
 
 Question to answer:
 
-- Which vet diagnosed most sick polar bears?
+- How many times has vet practice X diagnosed a polar bear as sick?
+- Which vet(s) has/have never seen a weight above the 99.9th percentile?
 - Which vet was the least consistent in name capitalization?
-- Which company made the sensor with the largest variation in blood pressure?
 - Which day had the lowest bear-to-visitor ratio?

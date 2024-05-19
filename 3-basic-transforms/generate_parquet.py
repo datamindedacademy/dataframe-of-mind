@@ -1,4 +1,3 @@
-import random
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import Enum
@@ -19,6 +18,7 @@ class Measurement:
     heart_rate: float
     temperature: float
     blood_glucose: float
+    sensor: int
 
 
 class LifeStage(Enum):
@@ -136,6 +136,7 @@ class BatchMeasurement:
 
 
 dt = timedelta(days=365).total_seconds()
+sensor_variations = {1: 1, 2: 4, 3: 0.5, 4: 0.1}
 
 
 class MeasurementProvider(BaseProvider):
@@ -147,15 +148,18 @@ class MeasurementProvider(BaseProvider):
         heart_rate = 70 * math.exp(-1.5 * max(age, 0) / dt) + 70
         temperature = temperature_per_day(timestamp=timestamp, name=name)
         bg = blood_glucose_per_day(timestamp=timestamp, name=name)
+        sensor = fake.random_int(1, 4)
+        variation = sensor_variations[sensor]
         return Measurement(
             id=fake.uuid4(),
             name=name,
             age=age,
             timestamp=timestamp,
             blood_pressure=fake.random_int(60, 140),
-            heart_rate=int(heart_rate + fake.random.gauss(0, 5)),
-            temperature=round(temperature + fake.random.gauss(0, 0.25), 2),
-            blood_glucose=int(bg + fake.random.gauss(0, 10)),
+            heart_rate=int(heart_rate + fake.random.gauss(0, 5 * variation)),
+            temperature=round(temperature + fake.random.gauss(0, 0.25 * variation), 2),
+            blood_glucose=int(bg + fake.random.gauss(0, 10 * variation)),
+            sensor=sensor,
         )
 
 
@@ -199,9 +203,30 @@ class BatchMeasurementProvider(BaseProvider):
         )
 
 
+@dataclass
+class VisitorMeasurement:
+    timestamp: datetime
+    visitors: int
+
+
+class VisitorProvider(BaseProvider):
+    __provider__ = "visitor_measurement"
+
+    def visitor_measurement(self, timestamp: datetime) -> VisitorMeasurement:
+        ts = timestamp.replace(hour=18, minute=0, second=0)
+        mean = 2400
+        variation = (-400, 0) if ts.weekday() < 5 else (0, 400)
+        visitors = fake.random_int(mean + variation[0], mean + variation[1])
+        return VisitorMeasurement(
+            timestamp=ts,
+            visitors=visitors,
+        )
+
+
 if __name__ == "__main__":
     fake.add_provider(MeasurementProvider)
     fake.add_provider(BatchMeasurementProvider)
+    fake.add_provider(VisitorProvider)
 
     days = 365 * 4
     N = int(days * 24)
@@ -225,10 +250,11 @@ if __name__ == "__main__":
                     t.heart_rate,
                     t.temperature,
                     t.blood_glucose,
+                    t.sensor,
                 )
             )
             f.write(
-                f"{t.id}|{t.name}|{t.timestamp}|{t.blood_pressure}|{t.heart_rate}|{t.temperature}|{t.blood_glucose}\n"
+                f"{t.id}|{t.name}|{t.timestamp}|{t.blood_pressure}|{t.heart_rate}|{t.temperature}|{t.blood_glucose}|{t.sensor}\n"
             )
     print(
         pl.from_records(
@@ -240,6 +266,7 @@ if __name__ == "__main__":
                 "heart_rate",
                 "temperature",
                 "blood_glucose",
+                "sensor",
             ],
         )
         .select(pl.all().shrink_dtype())
@@ -291,4 +318,36 @@ if __name__ == "__main__":
         )
         .select(pl.all().shrink_dtype())
         .write_parquet("data/batch_measurements.parquet")
+    )
+    vet_dimension = pl.DataFrame(
+        {
+            "vet": [1, 2, 3, 4, 5],
+            "name": [
+                "Zooey Codewell",
+                "Script Safari",
+                "Debug Dino",
+                "Pixel Paws",
+                "Byte Lyon",
+            ],
+        }
+    )
+    print(vet_dimension)
+    vet_dimension.write_parquet("data/dim_vet.parquet")
+
+    visitor_measurements = []
+    ts = datetime(2020, 4, 20, 6, 15)
+    while ts <= max(timestamps):
+        vm = fake.visitor_measurement(ts)
+        visitor_measurements.append((vm.timestamp, vm.visitors))
+        ts += timedelta(days=1)
+    print(
+        pl.from_records(
+            visitor_measurements,
+            schema=[
+                "timestamp",
+                "visitors",
+            ],
+        )
+        .select(pl.all().shrink_dtype())
+        .write_parquet("data/visitors.parquet")
     )
