@@ -4,6 +4,8 @@ Relational algebra forms the cornerstone of SQL, the de-facto standard for query
 
 Instead of re-inventing the wheel, analytical engines have largely adopted a SQL or SQL-like interace for querying data, making SQL the lingua franca of the analytics space. The DataFrame API is a higher level of abstraction, which similarly gets translated into a query plan optimized by the analytical engine.
 
+## Task
+
 As you have seen in the previous exercise, we will be working with a (fake) dataset concerning the health and wellbeing of polar bears in a zoo. We have two types of measurements: batch measurements, performed by veterinarians every few days, and "real time" measurements sent out by wireless sensors.
 
 Run `poetry run python 3-basic-transforms/generate_parquet.py` in order to generate the required parquet files for this and the following exercises.

@@ -8,6 +8,8 @@ UDFs in Polars come in three flavors:
 - `map_batches`: a function that iterates over one or multiple Series. The output must be a Series. In a `GroupBy` context, `map_batches` still consumes the entire Series, and not the different groups!
 - `map_elements`: a function that iterates over the elements of a Series. The output must be a Series. In a `GroupBy` context, `map_elements` consumes the elements of the Series per group.
 
+## Task
+
 In this exercise, we want to figure out which non-weekend or holiday days attracted the most visitors. To do so, we'll write two user-defined functions:
 
 - `is_weekend`: a function that determines whether a zoo opening date is a weekend day or not.
