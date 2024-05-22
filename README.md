@@ -2,7 +2,6 @@
 
 This repository contains the exercises for the course around DataFrames and data processing with two different analytics engines: Polars and Pyspark.
 
-
 Below will be removed from the README, but is useful as a guideline during development of the course.
 
 * Operational vs. analytical data
@@ -28,7 +27,7 @@ Below will be removed from the README, but is useful as a guideline during devel
 * PySpark:
 
   * Deep dive + architecture
-  * Hands-on exercises**	**
+  * Hands-on exercises
 * Ecosystem
 * Advanced
 

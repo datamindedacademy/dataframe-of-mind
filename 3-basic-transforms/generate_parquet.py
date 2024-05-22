@@ -238,40 +238,18 @@ if __name__ == "__main__":
         for name in name_pool
     ]
     records = []
-    with open("data/measurements.csv", "w") as f:
-        for t in measurements:
-            if t.age < 0:
-                continue
-            records.append(
-                (
-                    t.name,
-                    t.timestamp,
-                    t.blood_pressure,
-                    t.heart_rate,
-                    t.temperature,
-                    t.blood_glucose,
-                    t.sensor,
-                )
-            )
-            f.write(
-                f"{t.id}|{t.name}|{t.timestamp}|{t.blood_pressure}|{t.heart_rate}|{t.temperature}|{t.blood_glucose}|{t.sensor}\n"
-            )
-    print(
-        pl.from_records(
-            records,
-            schema=[
-                "name",
-                "timestamp",
-                "blood_pressure",
-                "heart_rate",
-                "temperature",
-                "blood_glucose",
-                "sensor",
-            ],
-        )
-        .select(pl.all().shrink_dtype())
-        .write_parquet("data/measurements.parquet")
-    )
+    pl.from_records(
+        records,
+        schema=[
+            "name",
+            "timestamp",
+            "blood_pressure",
+            "heart_rate",
+            "temperature",
+            "blood_glucose",
+            "sensor",
+        ],
+    ).select(pl.all().shrink_dtype()).write_parquet("data/measurements.parquet")
 
     timestamps = [
         datetime(2020, 4, 20, 6, 15) + i * timedelta(days=2) for i in range(N_batch)
@@ -282,43 +260,19 @@ if __name__ == "__main__":
         for name in name_pool
     ]
     records = []
-    with open("data/batch_measurements.csv", "w") as f:
-        for t in batch_measurements:
-            if t.age < 0:
-                continue
-            records.append(
-                (
-                    t.name,
-                    t.vet,
-                    t.years,
-                    t.weight,
-                    t.daily_steps,
-                    t.timestamp,
-                    t.vet_health_check.value,
-                    t.life_stage.value,
-                )
-            )
-            ts = datetime.strftime(t.timestamp, r"%d%m%YT%H:%M:%S")
-            f.write(
-                f"{t.name}|{t.years}|{t.weight}|{t.daily_steps}|{ts}|{t.vet_health_check.value}|{t.life_stage.value}\n"
-            )
-    print(
-        pl.from_records(
-            records,
-            schema=[
-                "name",
-                "vet",
-                "age",
-                "weight",
-                "daily_steps",
-                "timestamp",
-                "vet_health_check",
-                "life_stage",
-            ],
-        )
-        .select(pl.all().shrink_dtype())
-        .write_parquet("data/batch_measurements.parquet")
-    )
+    pl.from_records(
+        records,
+        schema=[
+            "name",
+            "vet",
+            "age",
+            "weight",
+            "daily_steps",
+            "timestamp",
+            "vet_health_check",
+            "life_stage",
+        ],
+    ).select(pl.all().shrink_dtype()).write_parquet("data/batch_measurements.parquet")
     vet_dimension = pl.DataFrame(
         {
             "vet": [1, 2, 3, 4, 5],
@@ -331,7 +285,6 @@ if __name__ == "__main__":
             ],
         }
     )
-    print(vet_dimension)
     vet_dimension.write_parquet("data/dim_vet.parquet")
 
     visitor_measurements = []
@@ -340,14 +293,10 @@ if __name__ == "__main__":
         vm = fake.visitor_measurement(ts)
         visitor_measurements.append((vm.timestamp, vm.visitors))
         ts += timedelta(days=1)
-    print(
-        pl.from_records(
-            visitor_measurements,
-            schema=[
-                "timestamp",
-                "visitors",
-            ],
-        )
-        .select(pl.all().shrink_dtype())
-        .write_parquet("data/visitors.parquet")
-    )
+    pl.from_records(
+        visitor_measurements,
+        schema=[
+            "timestamp",
+            "visitors",
+        ],
+    ).select(pl.all().shrink_dtype()).write_parquet("data/visitors.parquet")
