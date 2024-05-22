@@ -1,7 +1,8 @@
 # Windowing and Aggregations
 
+Windowing and aggregations lie at the core of analytics: you course-grain information by aggregating it within a suitable contex, or grouping of records. Aggregate values often allow us to identify key trends or patterns in the underlying data, which can further inform decisions to optimize our operational processes.
 
-Answer the following questions:
+In this, we are going to answer some questions of interest to the medical staff of the Zoo by aggregating and windowing data:
 
 - For every year, figure out which polar bear was the heaviest
 - When was the first and last measurement of each bear taken?
