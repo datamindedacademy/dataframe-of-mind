@@ -3,6 +3,7 @@ image: gitpod/workspace-python
 tasks:
   - name: Install deps and enter shell
     command: |
+      poetry config virtualenvs.in-project true
       poetry install
       poetry shell
 
