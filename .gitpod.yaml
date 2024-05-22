@@ -1,4 +1,0 @@
-image: gitpod/workspace-python
-
-tasks:
-    - init: poetry install

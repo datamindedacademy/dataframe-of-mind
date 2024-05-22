@@ -1,0 +1,12 @@
+image: gitpod/workspace-python
+
+tasks:
+  - name: Install deps and enter shell
+    command: |
+      poetry install
+      poetry shell
+
+checkoutLocation: '.'
+vscode:
+  extensions:
+    - ms-python.python
