@@ -302,8 +302,6 @@ if __name__ == "__main__":
             "life_stage",
         ],
     ).select(pl.all().shrink_dtype())
-    print(df)
-    print(records)
     df.write_parquet("data/batch_measurements.parquet")
     vet_dimension = pl.DataFrame(
         {
