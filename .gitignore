@@ -1,2 +1,6 @@
 *.csv
 *.parquet
+*.venv
+*.vscode-remote
+*.gitpod
+*.pyenv_mirror
