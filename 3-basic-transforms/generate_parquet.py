@@ -29,6 +29,7 @@ class LifeStage(Enum):
 
 
 fake = Faker()
+fake.seed_instance(0)
 
 name_pool = [
     "Icy Ingrid",
