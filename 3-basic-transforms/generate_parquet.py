@@ -238,6 +238,20 @@ if __name__ == "__main__":
         for name in name_pool
     ]
     records = []
+    for t in measurements:
+        if t.age < 0:
+            continue
+        records.append(
+            (
+                t.name,
+                t.timestamp,
+                t.blood_pressure,
+                t.heart_rate,
+                t.temperature,
+                t.blood_glucose,
+                t.sensor,
+            )
+        )
     pl.from_records(
         records,
         schema=[
@@ -260,7 +274,22 @@ if __name__ == "__main__":
         for name in name_pool
     ]
     records = []
-    pl.from_records(
+    for t in batch_measurements:
+        if t.age < 0:
+            continue
+        records.append(
+            (
+                t.name,
+                t.vet,
+                t.years,
+                t.weight,
+                t.daily_steps,
+                t.timestamp,
+                t.vet_health_check.value,
+                t.life_stage.value,
+            )
+        )
+    df = pl.from_records(
         records,
         schema=[
             "name",
@@ -272,7 +301,10 @@ if __name__ == "__main__":
             "vet_health_check",
             "life_stage",
         ],
-    ).select(pl.all().shrink_dtype()).write_parquet("data/batch_measurements.parquet")
+    ).select(pl.all().shrink_dtype())
+    print(df)
+    print(records)
+    df.write_parquet("data/batch_measurements.parquet")
     vet_dimension = pl.DataFrame(
         {
             "vet": [1, 2, 3, 4, 5],
@@ -282,6 +314,13 @@ if __name__ == "__main__":
                 "Debug Dino",
                 "Pixel Paws",
                 "Byte Lyon",
+            ],
+            "practice": [
+                "TechSavvy Vets",
+                "Digital Wildlife Care",
+                "Digital Wildlife Care",
+                "CodePaws Veterinary Clinic",
+                "TechSavvy Vets",
             ],
         }
     )
