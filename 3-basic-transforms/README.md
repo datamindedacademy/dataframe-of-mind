@@ -14,6 +14,6 @@ In this exercise, we are going to use some of the basic relational operations to
 
 - Was there in 2022 an injured polar bear older than 15 (i.e. a senior polar bear)? Bonus question: can you answer the same question using Polars [categorical types](https://docs.pola.rs/user-guide/concepts/data-types/categoricals/#enum-vs-categorical)?
 - How many times was Blizzard Bob's name capitalized in the batch measurements?
-- Was Cubby Coldpaw ever sick with a temperature above 40 degrees? (Hint: you might need to perform some data wrangling by performing a union and downfill.)
+- Was Chilly Willy ever sick with a temperature above 40 degrees? (Hint: you might need to perform some data wrangling by performing a union and downfill.)
 
 First try to answer the questions with Polars' DataFrame API. Can you answer them as well using Polars' SQL dialect?
