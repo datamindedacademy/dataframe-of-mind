@@ -121,5 +121,5 @@ if __name__ == "__main__":
                 continue
 
             f.write(
-                f"{t.name}|{t.age}|{t.weight}|{t.daily_steps}|{datetime.strftime(t.timestamp, "%d%m%YT%H:%M:%S")}|{t.vet_health_check.value}|{t.life_stage.value}\n"
+                f"{t.name}|{t.age}|{t.weight}|{t.daily_steps}|{datetime.strftime(t.timestamp, '%d%m%YT%H:%M:%S')}|{t.vet_health_check.value}|{t.life_stage.value}\n"
             )
