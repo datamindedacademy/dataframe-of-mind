@@ -10,7 +10,7 @@ UDFs in Polars come in three flavors:
 
 ## Task
 
-In this exercise, we want to figure out which non-weekend or holiday days attracted the most visitors. To do so, we'll write two user-defined functions:
+In this exercise, we want to figure out which non-weekend and non-holiday days attracted the most visitors. To do so, we'll write two user-defined functions:
 
 - `is_weekend`: a function that determines whether a zoo opening date is a weekend day or not.
 - `is_holiday`: a function that determines whether a zoo opening date is a holiday or not.
