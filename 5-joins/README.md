@@ -12,6 +12,6 @@ For these exercises, you will have the following extra tables on the measurement
 Using these tables, answer the following questions :
 
 - How many times has vet practice Digital Wildlife Care diagnosed a polar bear as sick?
-- Which vet(s) has/have never seen a weight above the 99.9th percentile?
+- Which vet(s) has/have never seen a weight above the 99.9th percentile? (Hint: the keyword to search for is `quantile`.)
 - Which vet was the least consistent in name capitalization?
 - Which day had the lowest bear-to-visitor ratio? A bear can be seen if the vet determines the bear is healthy. (Hint: while joins require an exact match, this question is most easily solved using a non-exact match.)
