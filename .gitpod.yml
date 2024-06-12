@@ -9,8 +9,8 @@ tasks:
       sdk use java 17.0.11-tem
   - name: Install graphiz
     command: |
-      apt-get update
-      apt-get install -y graphviz
+      sudo apt-get update
+      sudo apt-get install -y graphviz
   - name: Install deps and enter shell
     command: |
       poetry config virtualenvs.in-project true
