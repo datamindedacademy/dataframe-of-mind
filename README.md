@@ -5,36 +5,9 @@
 
 This repository contains the exercises for the course around DataFrames and data processing with two different analytics engines: Polars and Pyspark.
 
-Below will be removed from the README, but is useful as a guideline during development of the course.
+For each exercise, there is a Markdown file included in the folder of the exercise, with an in-depth explanation of the goal of the exercise and how to get started. 
 
-* Operational vs. analytical data
-* Data processing / data transformation
+Some handy links you will probably need to complete the exercises:
 
-  * Examples transformations (input/output) for each common transformation (relational model)
-    * Join
-    * Agg (GroupBy)
-    * Window
-    * Filter
-    * Project
-* DataFrame abstraction (tabular data vs. unstructured or semi-structured data)
-* Engines
-
-  * Spark vs. Polars vs. DuckDB vs. Pandas
-    * Cost / Simplicity / scalability trade-off
-    * SQL vs. DataFrame API
-    * Roles: analyst, data scientist, data engineer
-* Polars:
-
-  * Deep dive + architecture
-  * Hands-on exercises
-* PySpark:
-
-  * Deep dive + architecture
-  * Hands-on exercises
-* Ecosystem
-* Advanced
-
-  * Arrow interoperability
-  * [Python DataFrame API](https://data-apis.org/dataframe-api/draft/API_specification/index.html#api-specification)
-  * Substrait
-* Outlook: processing in the data engineering landscape
+- [Polars documentation](https://docs.pola.rs/api/python/stable/reference/index.html)
+- [PySpark documentation](https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/index.html)
