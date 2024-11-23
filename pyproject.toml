@@ -8,9 +8,9 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.9"
 Faker = "^24.8.0"
-polars = {extras = ["plot"], version = "^0.20.23"}
+polars = {extras = ["plot"], version = "^1.14"}
 pyspark = "^3.5.1"
-pyarrow = "^16.0.0"
+pyarrow = "^18.0"
 graphviz = "^0.20.3"
 
 [tool.poetry.group.dev.dependencies]
