@@ -9,7 +9,7 @@ readme = "README.md"
 python = "^3.9"
 Faker = "^33.1.0"
 polars = {extras = ["plot"], version = "^1.17"}
-pyspark = "^3.5.1"
+pyspark = "^3.5.4"
 pyarrow = "^18.1"
 graphviz = "^0.20.3"
 
