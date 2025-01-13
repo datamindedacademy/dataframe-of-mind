@@ -7,7 +7,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.9"
-Faker = "^33.3.0"
+Faker = "^33.3.1"
 polars = {extras = ["plot"], version = "^1.19"}
 pyspark = "^3.5.4"
 pyarrow = "^18.1"
