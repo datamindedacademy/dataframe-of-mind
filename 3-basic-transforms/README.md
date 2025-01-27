@@ -8,7 +8,7 @@ Instead of re-inventing the wheel, analytical engines have largely adopted a SQL
 
 As you have seen in the previous exercise, we will be working with a (fake) dataset concerning the health and wellbeing of polar bears in a zoo. We have two types of measurements: batch measurements, performed by veterinarians every few days, and "real time" measurements sent out by wireless sensors.
 
-Run `poetry run python 3-basic-transforms/generate_parquet.py` in order to generate the required parquet files for this and the following exercises.
+Run `uv run python 3-basic-transforms/generate_parquet.py` in order to generate the required parquet files for this and the following exercises.
 
 In this exercise, we are going to use some of the basic relational operations to answer the following questions:
 
