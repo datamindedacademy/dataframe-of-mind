@@ -9,7 +9,7 @@ dependencies = [
     "Faker>=33.3.1,<41",
     "polars[plot]~=1.20",
     "pyspark>=3.5.4,<5",
-    "pyarrow~=22.0",
+    "pyarrow~=23.0",
     "graphviz>=0.20.3,<0.22",
 ]
 
