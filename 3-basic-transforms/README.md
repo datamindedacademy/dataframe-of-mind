@@ -12,7 +12,7 @@ Run `uv run python 3-basic-transforms/generate_parquet.py` in order to generate 
 
 In this exercise, we are going to use some of the basic relational operations to answer the following questions:
 
-- Was there in 2022 an injured polar bear older than 15 (i.e. a senior polar bear)? Bonus question: can you answer the same question using Polars [categorical types](https://docs.pola.rs/user-guide/expressions/categorical-data-and-enums/#data-type-categorical)?
+- Was there in 2022 an injured polar bear older than 15 (i.e. a senior polar bear)? Bonus question: can you answer the same question using Polars [categorical types](https://docs.pola.rs/user-guide/expressions/categorical-data-and-enums/#data-type-categorical)? When / why would you use categorical types?
 - How many times was Blizzard Bob's name capitalized in the batch measurements?
 - Was Chilly Willy ever sick with a temperature above 40 degrees? (Hint: you might need to perform some data wrangling by performing a union and downfill.)
 
