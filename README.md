@@ -1,6 +1,7 @@
 
 # DataFrame of Mind with Polars and PySpark
 
+[![Dataminded Academy](https://raw.githubusercontent.com/datamindedacademy/branding/main/assets/badge.svg)](https://github.com/datamindedacademy)
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/datamindedacademy/dataframe-of-mind)
 
 This repository contains the exercises for the course around DataFrames and data processing with two different analytics engines: Polars and Pyspark.
