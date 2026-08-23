@@ -4,3 +4,6 @@
 *.vscode-remote
 *.gitpod
 *.pyenv_mirror
+node_modules/
+docs/dist/
+docs/.slidev/
