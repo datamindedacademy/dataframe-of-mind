@@ -1,0 +1,19 @@
+{
+  "name": "dataframe-of-mind-slides",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "slidev slides.md --open",
+    "build": "slidev build slides.md",
+    "export": "slidev export slides.md --output DataFrame-of-Mind.pdf"
+  },
+  "dependencies": {
+    "@slidev/cli": "^0.50.0",
+    "@slidev/theme-default": "^0.25.0",
+    "slidev-theme-dataminded": "file:./theme"
+  },
+  "devDependencies": {
+    "@iconify-json/mdi": "^1.2.0",
+    "playwright-chromium": "^1.48.0"
+  }
+}

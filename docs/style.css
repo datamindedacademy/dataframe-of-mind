@@ -1,0 +1,109 @@
+/* Slidev 0.50 parks the "go to slide" dialog off-screen (`-top-20`) when it is closed,
+   but its autocomplete list keeps rendering and hangs down over the slide as a list of
+   every slide title. Hide the list while the dialog is parked; pressing "g" still works. */
+#slidev-goto-dialog[class*="-top-20"] .autocomplete-list {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+   Operational vs. analytical pages: a block of raw bits with a record row and
+   an attribute column called out over it, and the feedback loop around it.
+   Rebuilt from the shapes on slides 4 and 5 of the original deck.
+   -------------------------------------------------------------------------- */
+.ova {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 48px;
+  margin-top: 24px;
+}
+.ova-side { flex: 1 1 0; max-width: 300px; padding-top: 34px; }
+.ova-pill {
+  border-radius: 6px;
+  color: #fff;
+  font-weight: 700;
+  text-align: center;
+  padding: 10px 12px;
+  margin-bottom: 18px;
+}
+.ova-pill--navy { background: var(--dm-premium); }
+.ova-pill--violet { background: var(--dm-connecting); }
+.ova-side ul { padding-left: 20px; }
+
+/* 200 x 325 is the image's own aspect ratio, so no row gets sliced in half. */
+.ova-bits { position: relative; width: 200px; height: 325px; flex: none; }
+.ova-bits img { width: 100%; height: 100%; display: block; }
+
+/* Both call-outs are outlines over the bits, never fills: the digits stay readable
+   inside them. Dashed for the record, solid for the field, as in the original. */
+.ova-row,
+.ova-col {
+  position: absolute;
+  box-sizing: border-box;
+  background: none;
+}
+.ova-row {
+  /* 12.5px is one row of digits at this scale; +4 for the border box */
+  left: -3px; right: -3px; top: -2px; height: 17px;
+  border: 2px dashed var(--dm-premium);
+}
+.ova-col {
+  top: -3px; bottom: -3px; left: 94px; width: 36px;
+  border: 2px solid var(--dm-connecting);
+}
+.ova-loop {
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  width: 260px; height: 260px;
+  overflow: visible;
+}
+
+/* --------------------------------------------------------------------------
+   "Whether or when" page: the schema-on-read / schema-on-write drawing with the
+   trade-off and an example database on either side, as on slide 8 of the original.
+   -------------------------------------------------------------------------- */
+.schema {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 20px;
+}
+.schema-side {
+  flex: 0 0 190px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  text-align: center;
+}
+.schema-icon { height: 66px; }
+.schema-logo { max-width: 150px; max-height: 54px; object-fit: contain; }
+.schema-diagram { flex: 1 1 auto; max-height: 330px; object-fit: contain; }
+
+/* Format logo strips under the extract / load columns (slide 15 of the original). */
+.fmt-logos {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+.fmt-logos img { height: 30px; width: auto; object-fit: contain; }
+
+/* The punchline that lands on the last click of the schema build. */
+.schema-punch { text-align: center; margin-top: 24px; font-size: 20px; }
+.ova-caption { text-align: center; margin-top: 20px; }
+
+/* Six agenda rows have to fit on one page; the theme's default row height fits five. */
+.dm-agenda-body ol > li {
+  padding: 10px 4px !important;
+  font-size: 19px !important;
+}
+
+/* The recap list: UnoCSS's reset strips list markers, so put the numbers back. */
+.dm-recap ol { list-style: decimal; padding-left: 26px; font-size: 18px; }
+.dm-recap li { margin-bottom: 10px; padding-left: 4px; }
+.dm-recap ul { list-style: disc; padding-left: 22px; margin-top: 6px; }
+.dm-recap ul li { margin-bottom: 4px; font-size: 17px; }
