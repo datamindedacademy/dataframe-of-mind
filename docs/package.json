@@ -8,7 +8,7 @@
     "export": "slidev export slides.md --output DataFrame-of-Mind.pdf"
   },
   "dependencies": {
-    "@slidev/cli": "^0.50.0",
+    "@slidev/cli": "^52.19.1",
     "@slidev/theme-default": "^0.25.0",
     "slidev-theme-dataminded": "file:./theme"
   },
