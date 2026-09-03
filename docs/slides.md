@@ -88,6 +88,62 @@ in the chaos, and leverage them to serve customers better, which keeps the busin
 -->
 
 ---
+layout: default
+label: 1 · Data and schemas
+---
+
+# <span class="dm-accent">Rows</span> group records; <span class="dm-accent">columns</span> group fields
+
+<div class="storage-compare">
+  <div class="storage-format storage-format--rows">
+    <div class="storage-format-head">
+      <strong>Row-oriented</strong>
+      <span>one line per record</span>
+    </div>
+    <div class="storage-file" aria-label="The same data stored one record per line">
+      <div class="storage-line storage-line--header">id,name,weight_kg,age,heart_rate,country</div>
+      <div class="storage-line">8,Ana,15,4,76,CA</div>
+      <div class="storage-line">1042,Nanook,40,15,54,NO</div>
+      <div class="storage-line">73,Pipaluk,30,9,68,GL</div>
+      <div class="storage-line storage-record-run">615,Siku,35,12,61,CA</div>
+      <div class="storage-line">204,Nuka,17,6,72,US</div>
+      <div class="storage-line">981,Tala,58,18,52,RU</div>
+    </div>
+    <p class="storage-question">Give me record <b>615</b></p>
+  </div>
+
+  <div class="storage-divider"><span>same data</span></div>
+
+  <div class="storage-format storage-format--columns">
+    <div class="storage-format-head">
+      <strong>Column-oriented</strong>
+      <span>one line per field</span>
+    </div>
+    <div class="storage-file" aria-label="The same data stored one field per line">
+      <div class="storage-line storage-line--header">field,value1,value2,value3,value4,value5,value6</div>
+      <div class="storage-line">id,8,1042,73,615,204,981</div>
+      <div class="storage-line">name,Ana,Nanook,Pipaluk,Siku,Nuka,Tala</div>
+      <div class="storage-line">weight_kg,15,40,30,35,17,58</div>
+      <div class="storage-line storage-field-run">age,4,15,9,12,6,18</div>
+      <div class="storage-line">heart_rate,76,54,68,61,72,52</div>
+      <div class="storage-line">country,CA,NO,GL,CA,US,RU</div>
+    </div>
+    <p class="storage-question">Give me the highest <b>age</b></p>
+  </div>
+</div>
+
+<p class="storage-punch" v-click="2">Same values, different order on disk, different work to retrieve them.</p>
+
+<!--
+This is the same tiny dataset written in two different orders. In the row-oriented version, put
+your finger at the start of Nanook's line and move right: the whole record arrives in one sweep.
+But to read every age, your finger has to jump to each line and count past several numeric fields.
+A column-oriented format transposes the physical layout. Now every age is adjacent, while
+reconstructing one bear means jumping between fields. Storage layout makes an access pattern cheap
+by keeping the values it needs together.
+-->
+
+---
 layout: statement
 title: Exercise - operational vs analytical data
 ---
