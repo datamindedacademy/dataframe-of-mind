@@ -1363,9 +1363,10 @@ label: 4 · How the engine executes it
 
 - **Predicate pushdown**: filter rows as early as possible
 - **Projection pushdown**: drop columns as early as possible
-- **Query pushdown**: push filters, joins and aggregations into the data source
+- **Slice pushdown**: read only the rows a `head` or `slice` actually needs
 
-Typically applied while reading the data, so the rows never enter memory at all.
+Applied while reading the data. Parquet stores min/max statistics per row group, so the engine
+skips whole groups and those rows never enter memory at all.
 
 </DmColumn>
 <DmColumn divider>
@@ -1390,6 +1391,16 @@ label: 4 · How the engine executes it
 
 <p class="text-center mt-2 opacity-80">Same three inputs, same result, 6 million intermediate rows of difference.</p>
 
+<!--
+Keep the claim the size it is. Polars lists join ordering among its optimisations, but what it does
+is estimate which branch to execute first so the smaller intermediate result is the one it has to
+hold. It is not a database-style cost-based rewrite of the whole join tree driven by table
+statistics, so do not promise that any join order you write will be fixed for you.
+
+[Sources]
+- https://docs.pola.rs/user-guide/lazy/optimizations/
+-->
+
 ---
 layout: default
 label: 4 · How the engine executes it
@@ -1410,14 +1421,18 @@ q1 = (
     .group_by("brand")
     .agg(pl.col("max_speed").max())
 )
-df = q1.collect(streaming=True)
+df = q1.collect(engine="streaming")
 ```
 
 </DmColumn>
-<DmColumn header="Supported operations" tone="navy" divider>
+<DmColumn header="What streams" tone="navy" divider>
 
-`filter`, `slice`, `head`, `tail`, `with_columns`, `select`, `group_by`, `join`, `unique`, `sort`,
-`explode`, `melt`, `scan_csv`, `scan_parquet`, `scan_ipc`
+Most of the API streams: `scan_csv`, `scan_parquet`, `scan_ipc`, `select`, `with_columns`,
+`filter`, `slice`, `group_by`, `join`, `unique`, `sort`, `explode`, `unpivot`.
+
+Anything that cannot stream falls back to the in-memory engine on its own, so a query never fails
+for this reason. To see which part does what:
+`show_graph(plan_stage="physical", engine="streaming")`.
 
 </DmColumn>
 </DmColumns>
