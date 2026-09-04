@@ -59,15 +59,10 @@
   overflow: visible;
 }
 
-/* A schema turns an anonymous record into named, typed fields. */
-.meaning-flow,
-.meaning-punch,
-.dataframe-figure,
-.dataframe-punch {
-  position: relative;
-  top: 46px;
-}
-.meaning-flow { margin-top: 18px; text-align: center; }
+/* A schema turns an anonymous record into named, typed fields.
+   The default layout centres what follows the title, so these blocks need no
+   nudging of their own. */
+.meaning-flow { text-align: center; }
 .meaning-raw span {
   display: block;
   margin-bottom: 8px;
@@ -118,7 +113,7 @@
 .meaning-punch b { color: var(--dm-connecting); }
 
 /* The same schema becomes the header of the DataFrame learners will query. */
-.dataframe-figure { margin-top: 10px; }
+.dataframe-figure { margin-top: 0; }
 .dataframe-example {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
@@ -162,7 +157,6 @@
 .dataframe-punch { margin-top: 14px !important; font-weight: 650; }
 
 /* Format examples connect physical layout and schema handling. */
-.format-slide-body { position: relative; top: 34px; }
 .fmt-logos {
   display: flex;
   align-items: center;
@@ -318,3 +312,94 @@
 /* Three rows of short prose sit comfortably at the grid's own size; only the
    row labels need to come down, so "Reach for it when" stays on one line. */
 .engine-cmp .dm-cmp-rowlabel { font-size: 13px !important; line-height: 1.3; }
+
+/* ===========================================================================
+   Section 3 (Expressing a query) additions.
+   Append to docs/style.css and restart the dev server: style.css is loaded
+   once at startup and hot reload does not pick it up.
+
+   Only the "One expression, four contexts" slide needs new structure. The rest
+   is three small shared helpers for the closing lines on the windowing,
+   aggregation, union and join slides.
+   =========================================================================== */
+
+/* --- Shared: sub-line under a title, and the closing punch line ----------- */
+.ctx-sub {
+  margin: 7px 0 0;
+  font-size: 15px;
+  opacity: 0.75;
+}
+.ctx-note,
+.win-note,
+.union-warn {
+  margin-top: 16px;
+  font-size: 15.5px;
+  text-align: center;
+}
+.ctx-note b,
+.win-note b {
+  color: var(--dm-connecting);
+}
+.ctx-sub code,
+.win-note code,
+.union-warn code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 13.5px;
+  background: var(--dm-authentic);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+.union-warn {
+  margin-top: 12px;
+  font-size: 14.5px;
+  opacity: 0.85;
+}
+
+/* --- One expression, four contexts ---------------------------------------- */
+.ctx {
+  margin-top: 18px;
+  border: 1px solid #e1e1e8;
+  border-radius: 9px;
+  overflow: hidden;
+}
+.ctx-row {
+  display: grid;
+  grid-template-columns: 47% 12% 41%; /* % so every row resolves identically */
+  align-items: center;
+  border-bottom: 1px solid #ececf2;
+}
+.ctx-row:last-child {
+  border-bottom: 0;
+}
+.ctx-row.ctx-head {
+  background: #efeffa;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.62;
+  font-weight: 600;
+}
+.ctx-row.ctx-head > div {
+  padding: 6px 14px;
+}
+.ctx-row > div {
+  padding: 9px 14px;
+}
+.ctx-code code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 13px;
+  color: var(--dm-connecting);
+}
+.ctx-shape {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 13px;
+  text-align: center;
+  background: var(--dm-authentic);
+  border-radius: 5px;
+  padding: 3px 0;
+  font-weight: 600;
+}
+.ctx-what {
+  font-size: 13.5px;
+  opacity: 0.78;
+}

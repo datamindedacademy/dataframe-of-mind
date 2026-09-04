@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from pathlib import Path
 from datetime import datetime, timedelta
 from enum import Enum
 import math
@@ -224,6 +225,9 @@ class VisitorProvider(BaseProvider):
         )
 
 
+DATA = Path(__file__).resolve().parent.parent / "data"
+
+
 if __name__ == "__main__":
     fake.add_provider(MeasurementProvider)
     fake.add_provider(BatchMeasurementProvider)
@@ -264,7 +268,8 @@ if __name__ == "__main__":
             "blood_glucose",
             "sensor",
         ],
-    ).select(pl.all().shrink_dtype()).write_parquet("data/measurements.parquet")
+        orient="row",
+    ).write_parquet(DATA / "measurements.parquet")
 
     timestamps = [
         datetime(2020, 4, 20, 6, 15) + i * timedelta(days=2) for i in range(N_batch)
@@ -302,8 +307,9 @@ if __name__ == "__main__":
             "vet_health_check",
             "life_stage",
         ],
-    ).select(pl.all().shrink_dtype())
-    df.write_parquet("data/batch_measurements.parquet")
+        orient="row",
+    )
+    df.write_parquet(DATA / "batch_measurements.parquet")
     vet_dimension = pl.DataFrame(
         {
             "vet": [1, 2, 3, 4, 5],
@@ -323,7 +329,7 @@ if __name__ == "__main__":
             ],
         }
     )
-    vet_dimension.write_parquet("data/dim_vet.parquet")
+    vet_dimension.write_parquet(DATA / "dim_vet.parquet")
 
     visitor_measurements = []
     ts = datetime(2020, 4, 20, 6, 15)
@@ -337,4 +343,5 @@ if __name__ == "__main__":
             "timestamp",
             "visitors",
         ],
-    ).select(pl.all().shrink_dtype()).write_parquet("data/visitors.parquet")
+        orient="row",
+    ).write_parquet(DATA / "visitors.parquet")
