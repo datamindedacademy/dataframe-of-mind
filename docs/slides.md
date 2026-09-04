@@ -102,12 +102,12 @@ label: 1 · Data and schemas
     </div>
     <div class="storage-file" aria-label="The same data stored one record per line">
       <div class="storage-line storage-line--header">id,name,weight_kg,age,heart_rate,country</div>
-      <div class="storage-line">8,Ana,15,4,76,CA</div>
-      <div class="storage-line">1042,Nanook,40,15,54,NO</div>
-      <div class="storage-line">73,Pipaluk,30,9,68,GL</div>
-      <div class="storage-line storage-record-run">615,Siku,35,12,61,CA</div>
-      <div class="storage-line">204,Nuka,17,6,72,US</div>
-      <div class="storage-line">981,Tala,58,18,52,RU</div>
+      <div class="storage-line">8,Ana,210,4,76,CA</div>
+      <div class="storage-line">1042,Nanook,480,15,54,NO</div>
+      <div class="storage-line">73,Pipaluk,320,9,68,GL</div>
+      <div class="storage-line storage-record-run">615,Siku,405,12,61,CA</div>
+      <div class="storage-line">204,Nuka,260,6,72,US</div>
+      <div class="storage-line">981,Tala,505,18,52,RU</div>
     </div>
     <p class="storage-question">Give me record <b>615</b></p>
   </div>
@@ -123,7 +123,7 @@ label: 1 · Data and schemas
       <div class="storage-line storage-line--header">field,value1,value2,value3,value4,value5,value6</div>
       <div class="storage-line">id,8,1042,73,615,204,981</div>
       <div class="storage-line">name,Ana,Nanook,Pipaluk,Siku,Nuka,Tala</div>
-      <div class="storage-line">weight_kg,15,40,30,35,17,58</div>
+      <div class="storage-line">weight_kg,210,480,320,405,260,505</div>
       <div class="storage-line storage-field-run">age,4,15,9,12,6,18</div>
       <div class="storage-line">heart_rate,76,54,68,61,72,52</div>
       <div class="storage-line">country,CA,NO,GL,CA,US,RU</div>
@@ -157,31 +157,33 @@ layout: default
 label: 1 · Data and schemas
 ---
 
-# Data is valuable when it has <span class="dm-accent">structure</span>
+# A schema gives values <span class="dm-accent">meaning</span>
 
-<div class="schema">
-  <div class="schema-side" v-click="1">
-    <img class="schema-icon" src="/img/icon-jsonstore.png" alt="Document store" />
-    <div>⚡ faster writes<br />💰 resource-intensive (storage, processing)</div>
-    <img class="schema-logo" src="/img/logo-mongodb.png" alt="MongoDB" />
+<div class="meaning-flow">
+  <div class="meaning-raw">
+    <span>A record without context</span>
+    <code>1042, Nanook, 480, 15, 54, NO</code>
   </div>
 
-  <img class="schema-diagram" src="/img/schema-on-read-vs-write.png"
-       alt="Schema-on-read versus schema-on-write" />
+  <div class="meaning-arrow" v-click="1"><b>↓</b> add names and types</div>
 
-  <div class="schema-side" v-click="1">
-    <img class="schema-icon" src="/img/icon-sqlstore.png" alt="Relational database" />
-    <div>🐢 slower writes<br />🪶 resource-efficient</div>
-    <img class="schema-logo" src="/img/logo-sqlserver.png" alt="Microsoft SQL Server" />
+  <div class="meaning-fields" v-click="1">
+    <div><span>id</span><strong>1042</strong><small>Int64</small></div>
+    <div><span>name</span><strong>Nanook</strong><small>String</small></div>
+    <div><span>weight_kg</span><strong>480</strong><small>Int64</small></div>
+    <div><span>age</span><strong>15</strong><small>Int64</small></div>
+    <div><span>heart_rate</span><strong>54</strong><small>Int64</small></div>
+    <div><span>country</span><strong>NO</strong><small>String</small></div>
   </div>
 </div>
 
-<p class="schema-punch" v-click="2">It's not a question of <span class="dm-accent">whether</span>
-you apply a schema, it's a question of <span class="dm-accent">when</span>.</p>
+<p class="meaning-punch" v-click="2"><b>Layout</b> tells us where values are.
+<b>Schema</b> tells us what they are.</p>
 
 <!--
-Relational vs. schemaless databases. Both apply a schema. The question is who pays for it and when:
-the writer, once, or every single reader, every single time.
+The exercise changed where the values were stored. A schema solves a different problem: it gives
+those values names and types. Without a schema, 15 is just a number. With one, it is an age. Layout
+is about location; schema is about interpretation.
 -->
 
 ---
@@ -189,51 +191,109 @@ layout: default
 label: 1 · Data and schemas
 ---
 
-# A dataset with a schema is usually a <span class="dm-accent">DataFrame</span>
+# File formats combine <span class="dm-accent">layout</span> and <span class="dm-accent">schema</span>
 
-<div class="flex justify-center mt-6">
-  <img src="/img/dataframe.png" alt="A DataFrame with rows and columns" style="height: 320px" />
+<div class="format-slide-body">
+<DmColumns class="mt-6">
+<DmColumn header="Record-oriented" tone="navy">
+
+- **CSV / TSV**: text; schema supplied or inferred
+- **Avro**: binary; writer schema stored with the data
+
+<div class="fmt-logos fmt-logos--center">
+  <img src="/img/logo-csv.png" alt="CSV" />
+  <img src="/img/logo-avro.png" alt="Avro" />
 </div>
+
+</DmColumn>
+<DmColumn header="Column-oriented" tone="violet" divider>
+
+- **Parquet / ORC**: binary; schema and statistics stored in the file
+- **Arrow IPC / Feather**: columnar interchange between tools
+
+<div class="fmt-logos fmt-logos--center">
+  <img src="/img/logo-parquet.png" alt="Parquet" />
+  <img src="/img/logo-orc.png" alt="Apache ORC" />
+  <img src="/img/logo-arrow.png" alt="Apache Arrow" />
+</div>
+
+</DmColumn>
+</DmColumns>
+
+<p class="format-punch">The format changes the physical representation, not what the data means.</p>
+</div>
+
+<!--
+A file format answers both questions we have introduced: where are the values placed, and how does
+the reader know what they mean? CSV keeps records as text and relies on outside knowledge for types.
+Avro keeps records together and carries its writer schema. Parquet and ORC group data by column and
+carry their schema and statistics. Arrow IPC is designed to exchange columnar data between tools.
+
+Databases and table formats sit at another layer. Postgres and DuckDB manage data through an engine;
+Delta and Iceberg organize data files into tables. They are useful examples later, but they are not
+the same kind of thing as CSV, Avro or Parquet.
+
+[Sources]
+- https://avro.apache.org/docs/1.11.3/
+- https://parquet.apache.org/
+- https://orc.apache.org/docs/
+- https://arrow.apache.org/docs/format/Columnar.html
+-->
 
 ---
 layout: default
 label: 1 · Data and schemas
 ---
 
-# Extracting and loading data: a wide range of <span class="dm-accent">possibilities</span>
+# Different formats, one <span class="dm-accent">DataFrame</span> abstraction
 
-<DmColumns class="mt-8">
-<DmColumn header="Operational ⚡ (extract)" tone="navy">
-
-- CSV / TSV
-- Avro
-- TXT
-- RDBMS (Postgres, MySQL, SQLite, ...)
-
-<div class="fmt-logos">
-  <img src="/img/logo-csv.png" alt="CSV" />
-  <img src="/img/logo-avro.png" alt="Avro" />
-  <img src="/img/logo-txt.png" alt="TXT" />
-  <img src="/img/logo-sqlite.png" alt="SQLite" />
+<div class="dataframe-figure">
+  <div class="dataframe-example">
+    <div class="dataframe-head">id<small>Int64</small></div>
+    <div class="dataframe-head">name<small>String</small></div>
+    <div class="dataframe-head">weight_kg<small>Int64</small></div>
+    <div class="dataframe-head">age<small>Int64</small></div>
+    <div class="dataframe-head">heart_rate<small>Int64</small></div>
+    <div class="dataframe-head">country<small>String</small></div>
+    <div>8</div>
+    <div>Ana</div>
+    <div>210</div>
+    <div>4</div>
+    <div>76</div>
+    <div>CA</div>
+    <div class="dataframe-row-hit">1042</div>
+    <div class="dataframe-row-hit">Nanook</div>
+    <div class="dataframe-row-hit">480</div>
+    <div class="dataframe-row-hit">15</div>
+    <div class="dataframe-row-hit">54</div>
+    <div class="dataframe-row-hit">NO</div>
+    <div>73</div>
+    <div>Pipaluk</div>
+    <div>320</div>
+    <div>9</div>
+    <div>68</div>
+    <div>GL</div>
+    <div>615</div>
+    <div>Siku</div>
+    <div>405</div>
+    <div>12</div>
+    <div>61</div>
+    <div>CA</div>
+  </div>
+  <div class="dataframe-legend">
+    <span class="dataframe-row-key"><b>Row</b> · one complete record</span>
+    <span class="dataframe-column-key"><b>Column</b> · one typed field across records</span>
+  </div>
 </div>
 
-</DmColumn>
-<DmColumn header="Analytical 🔍 (load)" tone="violet" divider>
+<p class="dataframe-punch">Libraries let us work with rows and typed columns, independent of the source format.</p>
 
-- Parquet (Delta, Iceberg)
-- ORC
-- Feather / Arrow IPC
-- DuckDB file format
-
-<div class="fmt-logos">
-  <img src="/img/logo-parquet.png" alt="Parquet" />
-  <img src="/img/logo-orc.png" alt="Apache ORC" />
-  <img src="/img/logo-arrow.png" alt="Apache Arrow" />
-  <img src="/img/logo-duckdb-mark.png" alt="DuckDB" />
-</div>
-
-</DmColumn>
-</DmColumns>
+<!--
+Put tabular data and its schema together and you have the mental model of a DataFrame. Rows are
+records; columns are named, typed fields. The source format can change without changing that logical
+model. The engines differ in how they execute operations, but they all let us work with this same
+abstraction. That is the bridge to the libraries we compare next.
+-->
 
 ---
 layout: section
@@ -246,38 +306,147 @@ layout: default
 label: 2 · The engines
 ---
 
-# Query engines power the <span class="dm-accent">transformations</span> in ETL
+# An engine turns a query into <span class="dm-accent">actual work</span>
 
 <div class="flex justify-center mt-2">
-  <img src="/img/etl-engine.png" alt="Sources feeding a processing engine that serves analytics" style="height: 300px" />
+  <img src="/img/etl-engine.png" alt="Sources feeding a processing engine that serves analytics" style="height: 268px" />
 </div>
 
-<p class="text-center mt-2 opacity-80">Extract from many sources, transform in the engine, load into analytical storage.</p>
+<p class="engine-punch">A <b>query engine</b> reads bytes in whatever layout they arrive, applies the
+operations you asked for, and writes the result back out.</p>
+
+<!--
+Section 1 ended on the DataFrame: rows, typed columns, one logical model regardless of the file
+format. That model does not execute itself. Something has to open the file, decide which bytes it
+actually needs, run the work across cores, and hand back a result. That something is the query
+engine, and it is what sits in the middle of every pipeline you will build.
+
+The T in ETL is the engine's job. Extract and load are mostly I/O; the transform is where the
+engine earns its keep. For the rest of the course we ask three questions about it, one per section:
+how do you express what you want (section 3), how does the engine decide to run it (section 4), and
+which engine should you pick (section 5).
+
+The three we compare are pandas, DuckDB and Polars. They all give you the same DataFrame model, so
+the interesting differences are underneath it.
+-->
 
 ---
 layout: default
 label: 2 · The engines
 ---
 
-# pandas, DuckDB and Polars <span class="dm-accent">compared</span>
+# Three engines, one <span class="dm-accent">DataFrame</span>
 
-<div class="dm-table mt-10">
+<DmComparison
+  class="engine-cmp mt-4"
+  :rows="['Born 🐣', 'What it is 📖', 'You write 📝', 'Loved by ❤️']"
+  :cols="['🐼 pandas', '🦆 DuckDB', '🐻‍❄️ Polars']"
+>
+  <template #r0c0>2008 🇺🇸</template>
+  <template #r0c1>2019 🇳🇱</template>
+  <template #r0c2>2020 🇳🇱</template>
 
-|                | 🐼 pandas           | 🦆 DuckDB       | 🐻‍❄️ Polars         |
-| -------------- | ------------------- | --------------- | ------------------ |
-| Born 🐣        | 2008 🇺🇸             | 2019 🇳🇱          | 2020 🇳🇱             |
-| Written in 📝  | Python (C, Fortran) | C++             | Rust               |
-| GitHub stars ⭐ | 47.8K               | 35.8K           | 37.3K              |
-| Loved by ❤️     | Data scientists 👩‍🔬  | Data analysts 👨‍💼 | Data engineers 👷   |
+  <template #r1c0>The original Python DataFrame library, and still the most widely taught.</template>
+  <template #r1c1>A small analytics database that runs inside your Python process.</template>
+  <template #r1c2>A newer DataFrame library, built for speed from the start.</template>
 
-</div>
+  <template #r2c0>Python</template>
+  <template #r2c1>SQL</template>
+  <template #r2c2>Python</template>
 
-<style>
-.dm-table table { width: 100%; border-collapse: collapse; font-size: 18px; }
-.dm-table th { text-align: left; font-weight: 700; padding: 12px 16px; border-bottom: 1px solid var(--dm-connecting); }
-.dm-table td { padding: 12px 16px; border-bottom: 1px solid rgba(8, 6, 53, 0.12); }
-.dm-table tbody tr td:first-child { font-weight: 600; }
-</style>
+  <template #r3c0>Data scientists 👩‍🔬</template>
+  <template #r3c1>Data analysts 👨‍💼</template>
+  <template #r3c2>Data engineers 👷</template>
+</DmComparison>
+
+<p class="engine-punch">All three hand you the same DataFrame. What differs is how you
+<b>ask</b> for it.</p>
+
+<!--
+Keep this slide short. It exists so nobody is lost when the next slide shows three snippets, not to
+settle the choice.
+
+The "loved by" row is the one to talk around, because it is a real pattern and not a rule. Data
+scientists inherited pandas from the notebooks and courses they learned in, analysts reach for
+DuckDB because it lets them stay in SQL, and engineers pick Polars when a pipeline has to be fast
+and predictable. Ask the room which of the three they already use, it tells you who you are talking
+to for the rest of the day.
+
+Notice the dates. pandas had roughly a decade on its own, and then two engines arrived within a
+year of each other. That is not a coincidence: it is what happens when one machine gets big enough
+to do work that used to need a cluster. Section 5 has the graph.
+
+If someone asks "so which one should I use", say that it depends on the size of the job and who
+maintains it, and that there is a decision diagram waiting in section 5. Do not settle it here.
+They cannot weigh the trade-offs before they know what the differences cost.
+
+Deliberately not on this slide: GitHub stars, which change monthly and have never decided an
+architecture, and the execution details. If an experienced room pushes: pandas is eager and
+single-core with a row index inherited from NumPy; DuckDB is a vectorised SQL engine that can spill
+to disk; Polars is Arrow-backed, has no index, plans the whole query before running it, and uses
+every core. Every one of those terms gets taught later, so do not lead with them.
+-->
+
+---
+layout: default
+label: 2 · The engines
+---
+
+# The same question in <span class="dm-accent">three dialects</span>
+
+<p class="engine-question">Average heart rate per bear, adults only.</p>
+
+<DmColumns class="mt-3" :gap="16">
+<DmColumn header="🐼 pandas" tone="navy">
+
+```py
+df = pd.read_parquet(path)
+adults = df[df["age"] >= 4]
+(adults
+  .groupby("name")["heart_rate"]
+  .mean())
+```
+
+</DmColumn>
+<DmColumn header="🦆 DuckDB" tone="navy" divider>
+
+```sql
+SELECT name, avg(heart_rate)
+FROM 'measurements.parquet'
+WHERE age >= 4
+GROUP BY name
+```
+
+</DmColumn>
+<DmColumn header="🐻‍❄️ Polars" tone="violet" divider>
+
+```py
+(pl.scan_parquet(path)
+  .filter(pl.col("age") >= 4)
+  .group_by("name")
+  .agg(
+    pl.col("heart_rate").mean()
+  )
+  .collect())
+```
+
+</DmColumn>
+</DmColumns>
+
+<!--
+Same question, same answer, three styles. Ask the room which one they would rather debug at
+half past five on a Friday, and let them argue for a minute.
+
+Three things to point at. pandas mutates and re-binds: `adults` is a new object, and the boolean
+mask is a separate expression from the column it filters. DuckDB is pure SQL over a file, with no
+Python object in sight. Polars reads as one pipeline, and `pl.col("age")` is not a value but a
+description of a column that the engine will resolve later.
+
+Note `scan_parquet` and `collect` in the Polars version. Nothing happens until `collect` is called.
+Do not explain why yet, just plant it: that is section 4.
+
+These styles have names, and they are the subject of section 3.
+-->
 
 ---
 layout: default
@@ -289,11 +458,11 @@ label: 2 · The engines
 <DmColumns class="mt-6">
 <DmColumn>
 
-- Main author: Ritchie Vink 🇳🇱, structural engineer by education
-- Started development during the COVID-19 pandemic 😷
+- Main author: Ritchie Vink 🇳🇱, a structural engineer by education
+- Started during the COVID-19 pandemic 😷, as an exercise in learning Rust
+- No database career behind it, so no inherited assumptions: no index, expressions everywhere, Arrow from day one
 - Full-time on Polars since July 2023, when he founded Polars Inc. to fund the work
 - The company sells enterprise support and Polars Cloud
-- One of the fastest growing data manipulation tools in the Python ecosystem
 
 </DmColumn>
 <DmColumn divider>
@@ -305,6 +474,66 @@ label: 2 · The engines
 </DmColumn>
 </DmColumns>
 
+<!--
+This is a short human beat, not a biography. The one bullet that matters is the third: the API you
+are about to use looks the way it does because it was not designed by someone carrying thirty years
+of RDBMS habits. Dropping the index was a choice, and every expression you write for the rest of
+the day is downstream of it.
+
+Worth saying out loud: this is a young project with a company attached, and it moves fast. Pin your
+version, and read release notes before upgrading.
+-->
+
+---
+layout: default
+label: 2 · The engines
+---
+
+# How to read a CSV with <span class="dm-accent">polars</span>
+
+```py
+pl.read_csv(
+    source: str | Path | IO[str] | IO[bytes] | bytes,
+    *,
+    has_header: bool = True,
+    columns: Sequence[int] | Sequence[str] | None = None,
+    new_columns: Sequence[str] | None = None,
+    separator: str = ',',
+    comment_prefix: str | None = None,
+    skip_rows: int = 0,
+    skip_lines: int = 0,
+    schema: SchemaDict | None = None,
+    schema_overrides: Mapping[str, PolarsDataType] | Sequence[PolarsDataType] | None = None,
+    null_values: str | Sequence[str] | dict[str, str] | None = None,
+    empty_string_is_null: bool = True,
+    infer_schema: bool = True,
+    infer_schema_length: int | None = 100,
+    ..., # there are many more arguments you can pass
+) -> DataFrame
+```
+
+
+A CSV may name its columns, never their <span class="dm-accent">types</span>. Since Polars works with DataFrames, you will need to help it understanding the schema.
+
+<!--
+Reconcile this with the formats slide from section 1, because someone always asks. That slide said
+CSV is "text; schema supplied or inferred", and this is the same claim from the reader's side. A
+header row can carry column *names*, which is why `has_header` exists. Nothing in the file carries
+*types*, which is why every other argument on this slide exists.
+
+Look at the defaults, they are the whole story. `has_header=True` assumes a header. `separator=','`
+assumes commas. `try_parse_dates=False` means dates arrive as strings unless you ask. Each default
+is a guess about a file the library has never seen, and `schema` or `schema_overrides` is how you
+replace a guess with a decision.
+
+The failure mode to name out loud: a wrong guess does not raise. The read succeeds, the column is a
+String instead of a date or a number, and nobody notices until a join returns nothing. So the habit
+is to look at `df.schema` before you look at the data.
+
+Do not walk through a worked example. They should discover which arguments their two files need,
+and the error messages on the way are worth more than a solution on a slide.
+-->
+
 ---
 layout: statement
 title: Demo - reading a dirty csv
@@ -313,6 +542,19 @@ title: Demo - reading a dirty csv
 # Demo time: a dirty, dirty CSV
 
 <p class="mt-6 text-lg opacity-80"><code>demo-reading-data/</code> and <code>2-csv-from-hell/</code></p>
+
+<!--
+Two files, both deliberately awful, and no README hand-holding: they have the arguments from the
+previous slide and the docs, and that is the point. Let them hit the error messages. Polars error
+messages are unusually good, and reading one properly is a skill worth ten minutes of frustration.
+
+The checkpoint question when they say they are done: "is every column the type you want?" Most
+people stop at "it read without an error" and leave numbers and timestamps sitting as strings.
+
+Note for the instructor: `demo-reading-data/` is about scan versus read against object storage,
+which is lazy evaluation and I/O pushdown. That is section 4 material and it lands better next to
+the hive partitioning demo. Consider running only `2-csv-from-hell/` here.
+-->
 
 ---
 layout: section

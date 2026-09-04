@@ -59,30 +59,110 @@
   overflow: visible;
 }
 
-/* --------------------------------------------------------------------------
-   "Whether or when" page: the schema-on-read / schema-on-write drawing with the
-   trade-off and an example database on either side, as on slide 8 of the original.
-   -------------------------------------------------------------------------- */
-.schema {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  margin-top: 20px;
+/* A schema turns an anonymous record into named, typed fields. */
+.meaning-flow,
+.meaning-punch,
+.dataframe-figure,
+.dataframe-punch {
+  position: relative;
+  top: 46px;
 }
-.schema-side {
-  flex: 0 0 190px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 18px;
+.meaning-flow { margin-top: 18px; text-align: center; }
+.meaning-raw span {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--dm-premium);
+  opacity: 0.65;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.meaning-raw code {
+  display: inline-block;
+  padding: 12px 22px;
+  border-radius: 6px;
+  background: var(--dm-surface);
+  color: var(--dm-premium);
+  font-size: 21px;
+}
+.meaning-arrow {
+  margin: 7px 0;
+  color: var(--dm-connecting);
+  font-size: 14px;
+  font-weight: 650;
+}
+.meaning-arrow b { display: block; font-size: 25px; line-height: 1; }
+.meaning-fields {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  border-top: 3px solid var(--dm-connecting);
+  border-bottom: 1px solid #d7d7e0;
+}
+.meaning-fields > div {
+  padding: 9px 7px 10px;
+  border-right: 1px solid #d7d7e0;
+}
+.meaning-fields > div:last-child { border-right: 0; }
+.meaning-fields span,
+.meaning-fields small { display: block; }
+.meaning-fields span { color: var(--dm-connecting); font-weight: 700; font-size: 14px; }
+.meaning-fields strong { display: block; margin: 4px 0 2px; font-size: 19px; }
+.meaning-fields small { font-size: 11px; opacity: 0.55; }
+.meaning-punch,
+.dataframe-punch {
+  margin: 20px 0 0 !important;
   text-align: center;
+  color: var(--dm-premium);
+  font-size: 18px;
 }
-.schema-icon { height: 66px; }
-.schema-logo { max-width: 150px; max-height: 54px; object-fit: contain; }
-.schema-diagram { flex: 1 1 auto; max-height: 330px; object-fit: contain; }
+.meaning-punch b { color: var(--dm-connecting); }
 
-/* Format logo strips under the extract / load columns (slide 15 of the original). */
+/* The same schema becomes the header of the DataFrame learners will query. */
+.dataframe-figure { margin-top: 10px; }
+.dataframe-example {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  text-align: center;
+  font-size: 15px;
+}
+.dataframe-example > div {
+  padding: 7px 5px;
+  border-bottom: 1px solid #dedee6;
+}
+.dataframe-example .dataframe-head {
+  padding: 7px 5px 8px;
+  border-bottom: 2px solid var(--dm-premium);
+  color: var(--dm-premium);
+  font-weight: 700;
+}
+.dataframe-head small {
+  display: block;
+  color: var(--dm-connecting);
+  font-size: 10px;
+  font-weight: 600;
+}
+.dataframe-example > div:nth-child(6n + 4) { background: rgba(84, 62, 220, 0.12); }
+.dataframe-example .dataframe-row-hit {
+  background: rgba(8, 6, 53, 0.08);
+  font-weight: 650;
+}
+.dataframe-example .dataframe-row-hit:nth-child(6n + 4) {
+  background: rgba(84, 62, 220, 0.26);
+  color: var(--dm-connecting);
+}
+.dataframe-legend {
+  display: flex;
+  justify-content: center;
+  gap: 48px;
+  margin-top: 15px;
+  font-size: 14px;
+}
+.dataframe-row-key b { color: var(--dm-premium); }
+.dataframe-column-key b { color: var(--dm-connecting); }
+.dataframe-punch { margin-top: 14px !important; font-weight: 650; }
+
+/* Format examples connect physical layout and schema handling. */
+.format-slide-body { position: relative; top: 34px; }
 .fmt-logos {
   display: flex;
   align-items: center;
@@ -91,9 +171,15 @@
   flex-wrap: wrap;
 }
 .fmt-logos img { height: 30px; width: auto; object-fit: contain; }
+.fmt-logos--center { justify-content: center; }
+.format-punch {
+  margin: 22px 0 0 !important;
+  text-align: center;
+  color: var(--dm-premium);
+  font-size: 18px;
+  font-weight: 650;
+}
 
-/* The punchline that lands on the last click of the schema build. */
-.schema-punch { text-align: center; margin-top: 24px; font-size: 20px; }
 .ova-caption { text-align: center; margin-top: 20px; }
 
 /* --------------------------------------------------------------------------
@@ -207,3 +293,28 @@
 .dm-recap li { margin-bottom: 10px; padding-left: 4px; }
 .dm-recap ul { list-style: disc; padding-left: 22px; margin-top: 6px; }
 .dm-recap ul li { margin-bottom: 4px; font-size: 17px; }
+
+/* --------------------------------------------------------------------------
+   Section 2, the engines: the closing line under the ETL diagram and the
+   comparison grid, and the question the three dialects all answer.
+   -------------------------------------------------------------------------- */
+.engine-punch {
+  margin: 18px 0 0 !important;
+  text-align: center;
+  color: var(--dm-premium);
+  font-size: 18px;
+  font-weight: 650;
+}
+.engine-punch b { color: var(--dm-connecting); }
+
+.engine-question {
+  margin: 8px 0 0 !important;
+  text-align: center;
+  color: var(--dm-premium);
+  font-size: 16px;
+  opacity: 0.75;
+}
+
+/* Three rows of short prose sit comfortably at the grid's own size; only the
+   row labels need to come down, so "Reach for it when" stays on one line. */
+.engine-cmp .dm-cmp-rowlabel { font-size: 13px !important; line-height: 1.3; }
