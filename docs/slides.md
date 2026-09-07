@@ -52,9 +52,7 @@ label: 1 · Data and schemas
 
 <div class="ova-bits">
   <img src="/img/bits.png" alt="A block of ones and zeros" />
-  <div class="ova-row" v-click="1" />
-  <div class="ova-col" v-click="2" />
-  <svg class="ova-loop" viewBox="0 0 340 340" v-click="3">
+  <svg class="ova-loop" viewBox="0 0 340 340" v-click="1">
     <path d="M 120.4 33.7 A 145 145 0 1 0 214 36"
           fill="none" stroke="var(--dm-connecting)" stroke-width="12" />
     <polygon points="0,-13 26,0 0,13" transform="translate(219.6, 33.7) rotate(200)"
@@ -73,7 +71,7 @@ label: 1 · Data and schemas
 </div>
 </div>
 
-<p class="ova-caption" v-click="3">Operations capture reality event by event, analytics finds the
+<p class="ova-caption" v-click="2">Operations capture reality event by event, analytics finds the
 patterns, and the patterns change how the next event is served.</p>
 
 <!--
@@ -181,7 +179,7 @@ label: 1 · Data and schemas
 <b>Schema</b> tells us what they are.</p>
 
 <!--
-The exercise changed where the values were stored. A schema solves a different problem: it gives
+The previous slide was about how values are stored. A schema solves a different problem: it gives
 those values names and types. Without a schema, 15 is just a number. With one, it is an age. Layout
 is about location; schema is about interpretation.
 -->
@@ -229,15 +227,9 @@ the reader know what they mean? CSV keeps records as text and relies on outside 
 Avro keeps records together and carries its writer schema. Parquet and ORC group data by column and
 carry their schema and statistics. Arrow IPC is designed to exchange columnar data between tools.
 
-Databases and table formats sit at another layer. Postgres and DuckDB manage data through an engine;
+You can mention databases and table formats but they sit at another layer. Postgres and DuckDB manage data through an engine;
 Delta and Iceberg organize data files into tables. They are useful examples later, but they are not
 the same kind of thing as CSV, Avro or Parquet.
-
-[Sources]
-- https://avro.apache.org/docs/1.11.3/
-- https://parquet.apache.org/
-- https://orc.apache.org/docs/
-- https://arrow.apache.org/docs/format/Columnar.html
 -->
 
 ---
@@ -318,7 +310,7 @@ operations you asked for, and writes the result back out.</p>
 <!--
 Section 1 ended on the DataFrame: rows, typed columns, one logical model regardless of the file
 format. That model does not execute itself. Something has to open the file, decide which bytes it
-actually needs, run the work across cores, and hand back a result. That something is the query
+actually needs, run the work and hand back a result. That something is the query
 engine, and it is what sits in the middle of every pipeline you will build.
 
 The T in ETL is the engine's job. Extract and load are mostly I/O; the transform is where the
@@ -369,22 +361,11 @@ settle the choice.
 The "loved by" row is the one to talk around, because it is a real pattern and not a rule. Data
 scientists inherited pandas from the notebooks and courses they learned in, analysts reach for
 DuckDB because it lets them stay in SQL, and engineers pick Polars when a pipeline has to be fast
-and predictable. Ask the room which of the three they already use, it tells you who you are talking
-to for the rest of the day.
+and predictable. You can ask the room which of the three they alredy use and create a conversation around it.
 
 Notice the dates. pandas had roughly a decade on its own, and then two engines arrived within a
 year of each other. That is not a coincidence: it is what happens when one machine gets big enough
 to do work that used to need a cluster. Section 5 has the graph.
-
-If someone asks "so which one should I use", say that it depends on the size of the job and who
-maintains it, and that there is a decision diagram waiting in section 5. Do not settle it here.
-They cannot weigh the trade-offs before they know what the differences cost.
-
-Deliberately not on this slide: GitHub stars, which change monthly and have never decided an
-architecture, and the execution details. If an experienced room pushes: pandas is eager and
-single-core with a row index inherited from NumPy; DuckDB is a vectorised SQL engine that can spill
-to disk; Polars is Arrow-backed, has no index, plans the whole query before running it, and uses
-every core. Every one of those terms gets taught later, so do not lead with them.
 -->
 
 ---
@@ -434,8 +415,7 @@ GROUP BY name
 </DmColumns>
 
 <!--
-Same question, same answer, three styles. Ask the room which one they would rather debug at
-half past five on a Friday, and let them argue for a minute.
+Same question, same answer, three styles.
 
 Three things to point at. pandas mutates and re-binds: `adults` is a new object, and the boolean
 mask is a separate expression from the column it filters. DuckDB is pure SQL over a file, with no
@@ -444,8 +424,6 @@ description of a column that the engine will resolve later.
 
 Note `scan_parquet` and `collect` in the Polars version. Nothing happens until `collect` is called.
 Do not explain why yet, just plant it: that is section 4.
-
-These styles have names, and they are the subject of section 3.
 -->
 
 ---
@@ -475,11 +453,6 @@ label: 2 · The engines
 </DmColumns>
 
 <!--
-This is a short human beat, not a biography. The one bullet that matters is the third: the API you
-are about to use looks the way it does because it was not designed by someone carrying thirty years
-of RDBMS habits. Dropping the index was a choice, and every expression you write for the rest of
-the day is downstream of it.
-
 Worth saying out loud: this is a young project with a company attached, and it moves fast. Pin your
 version, and read release notes before upgrading.
 -->
@@ -505,22 +478,17 @@ pl.read_csv(
     schema: SchemaDict | None = None,
     schema_overrides: Mapping[str, PolarsDataType] | Sequence[PolarsDataType] | None = None,
     null_values: str | Sequence[str] | dict[str, str] | None = None,
-    empty_string_is_null: bool = True,
     infer_schema: bool = True,
     infer_schema_length: int | None = 100,
-    ..., # there are many more arguments you can pass
+    ..., # there are many more arguments you can pass check 
 ) -> DataFrame
 ```
 
+<p class="text-sm opacity-80">Full argument list: <a href="https://docs.pola.rs/api/python/stable/reference/api/polars.read_csv.html" target="_blank">docs.pola.rs · read_csv</a></p>
 
 A CSV may name its columns, never their <span class="dm-accent">types</span>. Since Polars works with DataFrames, you will need to help it understanding the schema.
 
 <!--
-Reconcile this with the formats slide from section 1, because someone always asks. That slide said
-CSV is "text; schema supplied or inferred", and this is the same claim from the reader's side. A
-header row can carry column *names*, which is why `has_header` exists. Nothing in the file carries
-*types*, which is why every other argument on this slide exists.
-
 Look at the defaults, they are the whole story. `has_header=True` assumes a header. `separator=','`
 assumes commas. `try_parse_dates=False` means dates arrive as strings unless you ask. Each default
 is a guess about a file the library has never seen, and `schema` or `schema_overrides` is how you
@@ -539,9 +507,9 @@ layout: statement
 title: Demo - reading a dirty csv
 ---
 
-# Demo time: a dirty, dirty CSV
+# Exercise time: a dirty, dirty CSV
 
-<p class="mt-6 text-lg opacity-80"><code>demo-reading-data/</code> and <code>2-csv-from-hell/</code></p>
+<p class="mt-6 text-lg opacity-80"><code>2-csv-from-hell/</code></p>
 
 <!--
 Two files, both deliberately awful, and no README hand-holding: they have the arguments from the
