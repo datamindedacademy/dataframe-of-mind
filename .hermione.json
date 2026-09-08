@@ -1,0 +1,12 @@
+{
+  "identity": "github",
+  "exercises": [
+    { "name": "demo-reading-data", "match": "demo-reading-data/**" },
+    { "name": "1-operational-vs-analytic", "match": "1-operational-vs-analytic/**" },
+    { "name": "2-csv-from-hell", "match": "2-csv-from-hell/**" },
+    { "name": "3-basic-transforms", "match": "3-basic-transforms/**" },
+    { "name": "4-window-aggregations", "match": "4-window-aggregations/**" },
+    { "name": "5-joins", "match": "5-joins/**" },
+    { "name": "6-udf", "match": "6-udf/**" }
+  ]
+}
