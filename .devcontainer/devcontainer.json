@@ -8,20 +8,14 @@
   "workspaceFolder": "/workspace",
   "postCreateCommand": "uv sync --frozen",
 
-  // Hermione, so the instructor can see live which exercise each student is on.
-  // The token scopes the data to this course; it is an enrollment token, not a
-  // credential for anything else. Identity comes from $GITHUB_USER, which
-  // Codespaces sets (see ../.hermione.json).
-  "containerEnv": {
-    "HERMIONE_BACKEND": "https://grpc.hermione.playground.dataminded.cloud",
-    "HERMIONE_TOKEN": "43c81b2ca40f4f73abbea5c7ac96439b"
-  },
-
   "customizations": {
     "vscode": {
       "extensions": [
         "ms-python.python",
         "ms-toolsai.jupyter",
+        // Reports which exercise each student is on, so the instructor can see
+        // live who is stuck. Backend, course token and the file -> exercise map
+        // all live in ../.hermione.json.
         "lightcone.hermione-vscode"
       ]
     }

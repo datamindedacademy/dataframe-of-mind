@@ -1,4 +1,6 @@
 {
+  "backend": "https://hermione.playground.dataminded.cloud",
+  "token": "43c81b2ca40f4f73abbea5c7ac96439b",
   "identity": "github",
   "exercises": [
     { "name": "demo-reading-data", "match": "demo-reading-data/**" },
