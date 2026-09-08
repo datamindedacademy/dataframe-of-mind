@@ -7,13 +7,13 @@ from datetime import datetime, timedelta
 
 @dataclass
 class Measurement:
-    id: int
+    id: str
     name: str
     timestamp: datetime
-    blood_pressure: float
-    heart_rate: float
-    temperature: float
-    blood_glucose: float
+    blood_pressure: int
+    heart_rate: int
+    temperature: int
+    blood_glucose: int
 
 
 class LifeStage(Enum):
