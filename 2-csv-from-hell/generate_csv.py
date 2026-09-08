@@ -2,6 +2,7 @@ from enum import Enum
 from faker.providers import BaseProvider
 from faker import Faker
 from dataclasses import dataclass
+from pathlib import Path
 from datetime import datetime, timedelta
 
 
@@ -100,6 +101,8 @@ class BatchMeasurementProvider(BaseProvider):
         )
 
 
+DATA = Path(__file__).resolve().parent.parent / "data"
+
 if __name__ == "__main__":
     fake.add_provider(MeasurementProvider)
     fake.add_provider(BatchMeasurementProvider)
@@ -107,7 +110,7 @@ if __name__ == "__main__":
     N = int(5_000)
     N_batch = int(1000)
     measurements = [fake.measurement() for _ in range(N)]
-    with open("data/measurements.csv", "w") as f:
+    with open(DATA / "measurements.csv", "w") as f:
         for t in measurements:
             f.write(
                 f"{t.id}|{t.name}|{t.timestamp}|{t.blood_pressure}|{t.heart_rate}|{t.temperature}|{t.blood_glucose}\n"
@@ -115,7 +118,7 @@ if __name__ == "__main__":
 
     timestamps = [datetime(2021, 1, 1) + i * timedelta(days=3) for i in range(N_batch)]
     batch_measurements = [fake.batch_measurement(timestamp) for timestamp in timestamps]
-    with open("data/batch_measurements.csv", "w") as f:
+    with open(DATA / "batch_measurements.csv", "w") as f:
         for t in batch_measurements:
             if t.age < 0:
                 continue

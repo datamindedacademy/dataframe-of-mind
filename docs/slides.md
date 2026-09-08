@@ -52,9 +52,7 @@ label: 1 · Data and schemas
 
 <div class="ova-bits">
   <img src="/img/bits.png" alt="A block of ones and zeros" />
-  <div class="ova-row" v-click="1" />
-  <div class="ova-col" v-click="2" />
-  <svg class="ova-loop" viewBox="0 0 340 340" v-click="3">
+  <svg class="ova-loop" viewBox="0 0 340 340" v-click="1">
     <path d="M 120.4 33.7 A 145 145 0 1 0 214 36"
           fill="none" stroke="var(--dm-connecting)" stroke-width="12" />
     <polygon points="0,-13 26,0 0,13" transform="translate(219.6, 33.7) rotate(200)"
@@ -73,7 +71,7 @@ label: 1 · Data and schemas
 </div>
 </div>
 
-<p class="ova-caption" v-click="3">Operations capture reality event by event, analytics finds the
+<p class="ova-caption" v-click="2">Operations capture reality event by event, analytics finds the
 patterns, and the patterns change how the next event is served.</p>
 
 <!--
@@ -82,9 +80,65 @@ operational system grabs a whole record: this customer, this order, right now. A
 grabs one field over millions of records: every order value of the past year. That single difference
 drives everything downstream, from the file format to the engine.
 
-Third click: during operations we capture the richness of reality, details of every event, so the
+During operations we capture the richness of reality, details of every event, so the
 business keeps running and customers are served well. Afterwards we understand the patterns hidden
 in the chaos, and leverage them to serve customers better, which keeps the business alive.
+-->
+
+---
+layout: default
+label: 1 · Data and schemas
+---
+
+# <span class="dm-accent">Rows</span> group records; <span class="dm-accent">columns</span> group fields
+
+<div class="storage-compare">
+  <div class="storage-format storage-format--rows">
+    <div class="storage-format-head">
+      <strong>Row-oriented</strong>
+      <span>one line per record</span>
+    </div>
+    <div class="storage-file" aria-label="The same data stored one record per line">
+      <div class="storage-line storage-line--header">id,name,weight_kg,age,heart_rate,country</div>
+      <div class="storage-line">8,Ana,210,4,76,CA</div>
+      <div class="storage-line">1042,Nanook,480,15,54,NO</div>
+      <div class="storage-line">73,Pipaluk,320,9,68,GL</div>
+      <div class="storage-line storage-record-run">615,Siku,405,12,61,CA</div>
+      <div class="storage-line">204,Nuka,260,6,72,NO</div>
+      <div class="storage-line">981,Tala,505,18,52,GL</div>
+    </div>
+    <p class="storage-question">Give me record <b>615</b></p>
+  </div>
+
+  <div class="storage-divider" v-click="1"><span>same data</span></div>
+
+  <div class="storage-format storage-format--columns" v-click="1">
+    <div class="storage-format-head">
+      <strong>Column-oriented</strong>
+      <span>one line per field</span>
+    </div>
+    <div class="storage-file" aria-label="The same data stored one field per line">
+      <div class="storage-line storage-line--header">field,value1,value2,value3,value4,value5,value6</div>
+      <div class="storage-line">id,8,1042,73,615,204,981</div>
+      <div class="storage-line">name,Ana,Nanook,Pipaluk,Siku,Nuka,Tala</div>
+      <div class="storage-line">weight_kg,210,480,320,405,260,505</div>
+      <div class="storage-line storage-field-run">age,4,15,9,12,6,18</div>
+      <div class="storage-line">heart_rate,76,54,68,61,72,52</div>
+      <div class="storage-line">country,CA,NO,GL,CA,NO,GL</div>
+    </div>
+    <p class="storage-question">Give me the highest <b>age</b></p>
+  </div>
+</div>
+
+<p class="storage-punch" v-click="2">Same values, different order on disk, different work to retrieve them.</p>
+
+<!--
+This is the same tiny dataset written in two different orders. In the row-oriented version, put
+your finger at the start of Nanook's line and move right: the whole record arrives in one sweep.
+But to read every age, your finger has to jump to each line and count past several numeric fields.
+A column-oriented format transposes the physical layout. Now every age is adjacent, while
+reconstructing one bear means jumping between fields. Storage layout makes an access pattern cheap
+by keeping the values it needs together.
 -->
 
 ---
@@ -101,31 +155,33 @@ layout: default
 label: 1 · Data and schemas
 ---
 
-# Data is valuable when it has <span class="dm-accent">structure</span>
+# A schema gives values <span class="dm-accent">meaning</span>
 
-<div class="schema">
-  <div class="schema-side" v-click="1">
-    <img class="schema-icon" src="/img/icon-jsonstore.png" alt="Document store" />
-    <div>⚡ faster writes<br />💰 resource-intensive (storage, processing)</div>
-    <img class="schema-logo" src="/img/logo-mongodb.png" alt="MongoDB" />
+<div class="meaning-flow">
+  <div class="meaning-raw">
+    <span>A record without context</span>
+    <code>1042, Nanook, 480, 15, 54, NO</code>
   </div>
 
-  <img class="schema-diagram" src="/img/schema-on-read-vs-write.png"
-       alt="Schema-on-read versus schema-on-write" />
+  <div class="meaning-arrow" v-click="1"><b>↓</b> add names and types</div>
 
-  <div class="schema-side" v-click="1">
-    <img class="schema-icon" src="/img/icon-sqlstore.png" alt="Relational database" />
-    <div>🐢 slower writes<br />🪶 resource-efficient</div>
-    <img class="schema-logo" src="/img/logo-sqlserver.png" alt="Microsoft SQL Server" />
+  <div class="meaning-fields" v-click="1">
+    <div><span>id</span><strong>1042</strong><small>Int64</small></div>
+    <div><span>name</span><strong>Nanook</strong><small>String</small></div>
+    <div><span>weight_kg</span><strong>480</strong><small>Int64</small></div>
+    <div><span>age</span><strong>15</strong><small>Int64</small></div>
+    <div><span>heart_rate</span><strong>54</strong><small>Int64</small></div>
+    <div><span>country</span><strong>NO</strong><small>String</small></div>
   </div>
 </div>
 
-<p class="schema-punch" v-click="2">It's not a question of <span class="dm-accent">whether</span>
-you apply a schema, it's a question of <span class="dm-accent">when</span>.</p>
+<p class="meaning-punch" v-click="2"><b>Layout</b> tells us where values are.
+<b>Schema</b> tells us what they are.</p>
 
 <!--
-Relational vs. schemaless databases. Both apply a schema. The question is who pays for it and when:
-the writer, once, or every single reader, every single time.
+The previous slide was about how values are stored. A schema solves a different problem: it gives
+those values names and types. Without a schema, 15 is just a number. With one, it is an age. Layout
+is about location; schema is about interpretation.
 -->
 
 ---
@@ -133,51 +189,115 @@ layout: default
 label: 1 · Data and schemas
 ---
 
-# A dataset with a schema is usually a <span class="dm-accent">DataFrame</span>
+# File formats combine <span class="dm-accent">layout</span> and <span class="dm-accent">schema</span>
 
-<div class="flex justify-center mt-6">
-  <img src="/img/dataframe.png" alt="A DataFrame with rows and columns" style="height: 320px" />
+<div class="format-slide-body">
+<DmColumns class="mt-6">
+<DmColumn header="Record-oriented" tone="navy">
+
+- **CSV / TSV**: text; schema supplied or inferred
+- **Avro**: binary; writer schema stored with the data
+
+<div class="fmt-logos fmt-logos--center">
+  <img src="/img/logo-csv.png" alt="CSV" />
+  <img src="/img/logo-avro.png" alt="Avro" />
 </div>
+
+</DmColumn>
+<DmColumn header="Column-oriented" tone="violet" divider>
+
+- **Parquet / ORC**: binary; schema and statistics stored in the file
+- **Arrow IPC / Feather**: columnar interchange between tools
+
+<div class="fmt-logos fmt-logos--center">
+  <img src="/img/logo-parquet.png" alt="Parquet" />
+  <img src="/img/logo-orc.png" alt="Apache ORC" />
+  <img src="/img/logo-arrow.png" alt="Apache Arrow" />
+</div>
+
+</DmColumn>
+</DmColumns>
+
+<p class="format-punch">The format changes the physical representation, not what the data means.</p>
+</div>
+
+<!--
+A file format answers both questions we have introduced: where are the values placed, and how does
+the reader know what they mean? CSV keeps records as text and relies on outside knowledge for types.
+Avro keeps records together and carries its writer schema. Parquet and ORC group data by column and
+carry their schema and statistics. Arrow IPC is designed to exchange columnar data between tools.
+
+You can mention databases and table formats but they sit at another layer. Postgres and DuckDB manage data through an engine;
+Delta and Iceberg organize data files into tables. They are useful examples later, but they are not
+the same kind of thing as CSV, Avro or Parquet.
+-->
 
 ---
 layout: default
 label: 1 · Data and schemas
 ---
 
-# Extracting and loading data: a wide range of <span class="dm-accent">possibilities</span>
+# Different formats, one <span class="dm-accent">DataFrame</span> abstraction
 
-<DmColumns class="mt-8">
-<DmColumn header="Operational ⚡ (extract)" tone="navy">
-
-- CSV / TSV
-- Avro
-- TXT
-- RDBMS (Postgres, MySQL, SQLite, ...)
-
-<div class="fmt-logos">
-  <img src="/img/logo-csv.png" alt="CSV" />
-  <img src="/img/logo-avro.png" alt="Avro" />
-  <img src="/img/logo-txt.png" alt="TXT" />
-  <img src="/img/logo-sqlite.png" alt="SQLite" />
+<div class="dataframe-figure">
+  <div class="dataframe-example">
+    <div class="dataframe-head">id<small>Int64</small></div>
+    <div class="dataframe-head">name<small>String</small></div>
+    <div class="dataframe-head">weight_kg<small>Int64</small></div>
+    <div class="dataframe-head">age<small>Int64</small></div>
+    <div class="dataframe-head">heart_rate<small>Int64</small></div>
+    <div class="dataframe-head">country<small>String</small></div>
+    <div>8</div>
+    <div>Ana</div>
+    <div>210</div>
+    <div>4</div>
+    <div>76</div>
+    <div>CA</div>
+    <div class="dataframe-row-hit">1042</div>
+    <div class="dataframe-row-hit">Nanook</div>
+    <div class="dataframe-row-hit">480</div>
+    <div class="dataframe-row-hit">15</div>
+    <div class="dataframe-row-hit">54</div>
+    <div class="dataframe-row-hit">NO</div>
+    <div>73</div>
+    <div>Pipaluk</div>
+    <div>320</div>
+    <div>9</div>
+    <div>68</div>
+    <div>GL</div>
+    <div>615</div>
+    <div>Siku</div>
+    <div>405</div>
+    <div>12</div>
+    <div>61</div>
+    <div>CA</div>
+    <div>204</div>
+    <div>Nuka</div>
+    <div>260</div>
+    <div>6</div>
+    <div>72</div>
+    <div>NO</div>
+    <div>981</div>
+    <div>Tala</div>
+    <div>505</div>
+    <div>18</div>
+    <div>52</div>
+    <div>GL</div>
+  </div>
+  <div class="dataframe-legend">
+    <span class="dataframe-row-key"><b>Row</b> · one complete record</span>
+    <span class="dataframe-column-key"><b>Column</b> · one typed field across records</span>
+  </div>
 </div>
 
-</DmColumn>
-<DmColumn header="Analytical 🔍 (load)" tone="violet" divider>
+<p class="dataframe-punch">Libraries let us work with rows and typed columns, independent of the source format.</p>
 
-- Parquet (Delta, Iceberg)
-- ORC
-- Feather / Arrow IPC
-- DuckDB file format
-
-<div class="fmt-logos">
-  <img src="/img/logo-parquet.png" alt="Parquet" />
-  <img src="/img/logo-orc.png" alt="Apache ORC" />
-  <img src="/img/logo-arrow.png" alt="Apache Arrow" />
-  <img src="/img/logo-duckdb-mark.png" alt="DuckDB" />
-</div>
-
-</DmColumn>
-</DmColumns>
+<!--
+Put tabular data and its schema together and you have the mental model of a DataFrame. Rows are
+records; columns are named, typed fields. The source format can change without changing that logical
+model. The engines differ in how they execute operations, but they all let us work with this same
+abstraction. That is the bridge to the libraries we compare next.
+-->
 
 ---
 layout: section
@@ -190,38 +310,129 @@ layout: default
 label: 2 · The engines
 ---
 
-# Query engines power the <span class="dm-accent">transformations</span> in ETL
+# An engine turns a query into <span class="dm-accent">actual work</span>
 
 <div class="flex justify-center mt-2">
-  <img src="/img/etl-engine.png" alt="Sources feeding a processing engine that serves analytics" style="height: 300px" />
+  <img src="/img/etl-engine.png" alt="Sources feeding a processing engine that serves analytics" style="height: 268px" />
 </div>
 
-<p class="text-center mt-2 opacity-80">Extract from many sources, transform in the engine, load into analytical storage.</p>
+<p class="engine-punch">A <b>query engine</b> reads bytes in whatever layout they arrive, applies the
+operations you asked for, and writes the result back out.</p>
+
+<!--
+Section 1 ended on the DataFrame: rows, typed columns, one logical model regardless of the file
+format. That model does not execute itself. Something has to open the file, decide which bytes it
+actually needs, run the work and hand back a result. That something is the query
+engine, and it is what sits in the middle of every pipeline you will build.
+
+The T in ETL is the engine's job. Extract and load are mostly I/O; the transform is where the
+engine earns its keep. For the rest of the course we ask three questions about it, one per section:
+how do you express what you want (section 3), how does the engine decide to run it (section 4), and
+which engine should you pick (section 5).
+
+The three we compare are pandas, DuckDB and Polars. They all give you the same DataFrame model, so
+the interesting differences are underneath it.
+-->
 
 ---
 layout: default
 label: 2 · The engines
 ---
 
-# pandas, DuckDB and Polars <span class="dm-accent">compared</span>
+# Three engines, one <span class="dm-accent">DataFrame</span>
 
-<div class="dm-table mt-10">
+<DmComparison
+  class="engine-cmp mt-4"
+  :rows="['Born 🐣', 'What it is 📖', 'You write 📝', 'Loved by ❤️']"
+  :cols="['🐼 pandas', '🦆 DuckDB', '🐻‍❄️ Polars']"
+>
+  <template #r0c0>2008 🇺🇸</template>
+  <template #r0c1>2019 🇳🇱</template>
+  <template #r0c2>2020 🇳🇱</template>
 
-|                | 🐼 pandas           | 🦆 DuckDB       | 🐻‍❄️ Polars         |
-| -------------- | ------------------- | --------------- | ------------------ |
-| Born 🐣        | 2008 🇺🇸             | 2019 🇳🇱          | 2020 🇳🇱             |
-| Written in 📝  | Python (C, Fortran) | C++             | Rust               |
-| GitHub stars ⭐ | 47.8K               | 35.8K           | 37.3K              |
-| Loved by ❤️     | Data scientists 👩‍🔬  | Data analysts 👨‍💼 | Data engineers 👷   |
+  <template #r1c0>The original Python DataFrame library, and still the most widely taught.</template>
+  <template #r1c1>A small analytics database that runs inside your Python process.</template>
+  <template #r1c2>A newer DataFrame library, built for speed from the start.</template>
 
-</div>
+  <template #r2c0>Python</template>
+  <template #r2c1>SQL</template>
+  <template #r2c2>Python</template>
 
-<style>
-.dm-table table { width: 100%; border-collapse: collapse; font-size: 18px; }
-.dm-table th { text-align: left; font-weight: 700; padding: 12px 16px; border-bottom: 1px solid var(--dm-connecting); }
-.dm-table td { padding: 12px 16px; border-bottom: 1px solid rgba(8, 6, 53, 0.12); }
-.dm-table tbody tr td:first-child { font-weight: 600; }
-</style>
+  <template #r3c0>Data scientists 👩‍🔬</template>
+  <template #r3c1>Data analysts 👨‍💼</template>
+  <template #r3c2>Data engineers 👷</template>
+</DmComparison>
+
+<p class="engine-punch">All three hand you the same DataFrame. What differs is how you
+<b>ask</b> for it.</p>
+
+<!--
+Keep this slide short. It exists so nobody is lost when the next slide shows three snippets, not to
+settle the choice.
+
+The "loved by" row is the one to talk around, because it is a real pattern and not a rule. Data
+scientists inherited pandas from the notebooks and courses they learned in, analysts reach for
+DuckDB because it lets them stay in SQL, and engineers pick Polars when a pipeline has to be fast
+and predictable. You can ask the room which of the three they alredy use and create a conversation around it.
+
+Notice the dates. pandas had roughly a decade on its own, and then two engines arrived within a
+year of each other. That is not a coincidence: it is what happens when one machine gets big enough
+to do work that used to need a cluster. Section 5 has the graph.
+-->
+
+---
+layout: default
+label: 2 · The engines
+---
+
+# The same question in <span class="dm-accent">three dialects</span>
+
+<p class="engine-question">Average heart rate per bear, adults only.</p>
+
+<DmColumns class="mt-3" :gap="16">
+<DmColumn header="🐼 pandas" tone="navy">
+
+```py
+df = pd.read_parquet(path)
+adults = df[df["age"] >= 4]
+(adults
+  .groupby("name")["heart_rate"]
+  .mean())
+```
+
+</DmColumn>
+<DmColumn header="🦆 DuckDB" tone="navy" divider>
+
+```sql
+SELECT name, avg(heart_rate)
+FROM 'bears.parquet'
+WHERE age >= 4
+GROUP BY name
+```
+
+</DmColumn>
+<DmColumn header="🐻‍❄️ Polars" tone="violet" divider>
+
+```py
+pl.read_parquet(path)
+  .filter(pl.col("age") >= 4)
+  .group_by("name")
+  .agg(
+    pl.col("heart_rate").mean()
+  )
+```
+
+</DmColumn>
+</DmColumns>
+
+<!--
+Same question, same answer, three styles.
+
+Three things to point at. pandas mutates and re-binds: `adults` is a new object, and the boolean
+mask is a separate expression from the column it filters. DuckDB is pure SQL over a file, with no
+Python object in sight. Polars reads as one pipeline, and `pl.col("age")` is not a value but a
+description of a column that the engine will resolve later.
+-->
 
 ---
 layout: default
@@ -233,11 +444,11 @@ label: 2 · The engines
 <DmColumns class="mt-6">
 <DmColumn>
 
-- Main author: Ritchie Vink 🇳🇱, structural engineer by education
-- Started development during the COVID-19 pandemic 😷
+- Main author: Ritchie Vink 🇳🇱, a structural engineer by education
+- Started during the COVID-19 pandemic 😷, as an exercise in learning Rust
+- No database career behind it, so no inherited assumptions: no index, expressions everywhere, Arrow from day one
 - Full-time on Polars since July 2023, when he founded Polars Inc. to fund the work
 - The company sells enterprise support and Polars Cloud
-- One of the fastest growing data manipulation tools in the Python ecosystem
 
 </DmColumn>
 <DmColumn divider>
@@ -249,68 +460,141 @@ label: 2 · The engines
 </DmColumn>
 </DmColumns>
 
+<!--
+Worth saying out loud: this is a young project with a company attached, and it moves fast. Pin your
+version, and read release notes before upgrading.
+-->
+
+---
+layout: default
+label: 2 · The engines
+---
+
+# How to read a CSV with <span class="dm-accent">polars</span>
+
+```py
+pl.read_csv(
+    source: str | Path | IO[str] | IO[bytes] | bytes,
+    *,
+    has_header: bool = True,
+    columns: Sequence[int] | Sequence[str] | None = None,
+    new_columns: Sequence[str] | None = None,
+    separator: str = ',',
+    comment_prefix: str | None = None,
+    skip_rows: int = 0,
+    skip_lines: int = 0,
+    schema: SchemaDict | None = None,
+    schema_overrides: Mapping[str, PolarsDataType] | Sequence[PolarsDataType] | None = None,
+    null_values: str | Sequence[str] | dict[str, str] | None = None,
+    infer_schema: bool = True,
+    infer_schema_length: int | None = 100,
+    ..., # there are many more arguments you can pass check 
+) -> DataFrame
+```
+
+<p class="text-sm opacity-80">Full argument list: <a href="https://docs.pola.rs/api/python/stable/reference/api/polars.read_csv.html" target="_blank">docs.pola.rs · read_csv</a></p>
+
+<p class="ova-caption" v-click="1">A CSV may name its columns, never their <span class="dm-accent">types</span>. Since Polars works with DataFrames, you will need to help it understanding the schema.</p>
+
+
+<!--
+Look at the defaults, they are the whole story. `has_header=True` assumes a header. `separator=','`
+assumes commas. `try_parse_dates=False` means dates arrive as strings unless you ask. Each default
+is a guess about a file the library has never seen, and `schema` or `schema_overrides` is how you
+replace a guess with a decision.
+
+The failure mode to name out loud: a wrong guess does not raise. The read succeeds, the column is a
+String instead of a date or a number, and nobody notices until a join returns nothing. So the habit
+is to look at `df.schema` before you look at the data.
+-->
+
 ---
 layout: statement
 title: Demo - reading a dirty csv
 ---
 
-# Demo time: a dirty, dirty CSV
+# Exercise time: a dirty, dirty CSV
 
-<p class="mt-6 text-lg opacity-80"><code>demo-reading-data/</code> and <code>2-csv-from-hell/</code></p>
+<p class="mt-6 text-lg opacity-80"><code>2-csv-from-hell/</code></p>
+
+<!--
+Two files, both deliberately awful, and no README hand-holding: they have the arguments from the
+previous slide and the docs. Let them hit the error messages.
+
+The checkpoint question when they say they are done: "is every column the type you want?" Most
+people stop at "it read without an error" and leave numbers and timestamps sitting as strings.
+-->
 
 ---
 layout: section
 ---
 
-# Querying and <span class="dm-accent">Transforming</span> Data
+# Expressing a <span class="dm-accent">query</span>
+
+<!--
+Section 2 left them with three engines and one sentence: all three hand you the same DataFrame,
+what differs is how you ask for it. This section is about the asking.
+-->
+
 
 ---
 layout: default
 label: 3 · Expressing a query
 ---
 
-# Imperative, declarative and <span class="dm-accent">functional</span> styles
+# Imperative and <span class="dm-accent">declarative</span> query styles
 
 <DmColumns class="mt-4" :gap="16">
-<DmColumn header="Imperative" tone="navy">
+<DmColumn header="Imperative Python" tone="navy" style="flex: 1 1 0">
 
 ```py
-affordable_cars = []
-for car in cars:
-  if car.price <= 30_000:
-    affordable_cars.append(car)
+seniors = []
+rows = bears.iter_rows(named=True)
+for row in rows:
+  if row["age"] >= 15:
+    seniors.append(row)
 ```
 
-Step by step, like a recipe.
+The loop fixes the iteration order and mutates the result.
 
 </DmColumn>
-<DmColumn header="Declarative" tone="navy" divider>
+<DmColumn header="Declarative" tone="violet" divider style="flex: 2 1 0">
+
+<DmColumns :gap="16">
+<DmColumn header="SQL text" tone="plain">
 
 ```sql
-SELECT brand, price FROM cars
-WHERE price <= 30000
+SELECT *
+FROM bears
+WHERE age >= 15
 ```
 
-Describe what you want, let an optimised engine work out how.
+The query describes the result. The engine chooses an execution plan.
 
 </DmColumn>
-<DmColumn header="Functional" tone="violet" divider>
+<DmColumn header="Polars expressions" tone="plain" divider>
 
 ```py
-cars = pl.read_csv("cars.csv")
-affordable = cars.filter(
-  pl.col("price") <= 30_000
-)
+senior = pl.col("age") >= 15
+seniors = bears.filter(senior)
 ```
 
-Chain functions into a pipeline, no duplication, no mutation.
+Describe the filter using a Python expression.
 
 </DmColumn>
 </DmColumns>
+</DmColumn>
+</DmColumns>
+
+<p class="mt-4">With declarative queries, you describe the transformation; the engine handles the row processing.</p>
 
 <!--
-Exercise: split into three groups, write the same transformation logic in each style, compare the
-results and discuss readability.
+The point to land is not that one syntax wins. Imperative code specifies the procedure, including
+iteration order and mutation. SQL and Polars expressions describe a result without spelling out a
+row-by-row procedure. That distinction gives an engine room to optimise the work it can see.
+
+SQL supplies a declarative description as text. Polars supplies expression objects in Python.
+`senior` can be named, reused and composed with other expressions, but it is not itself a function.
 -->
 
 ---
@@ -328,6 +612,10 @@ label: 3 · Expressing a query
 
 <!--
 Voilà, summarised in a single slide.
+
+Not spend much time on this. The message is that no matter which interface you use to transform data,
+in the end you're doing relational algebra, which is well studied and adopted. We'll see some
+of these operations in the next slides, with polars syntax.
 -->
 
 ---
@@ -335,43 +623,184 @@ layout: default
 label: 3 · Expressing a query
 ---
 
-# Project, filter, rename, union, <span class="dm-accent">join</span>
+# Project, filter, rename, <span class="dm-accent">union</span>
 
-<DmColumns class="mt-4">
+`more_bears` contains additional bears with the same columns as `bears`.
+
+<DmColumns class="mt-3" :gap="16">
 <DmColumn header="SQL" tone="navy">
 
 ```sql
-SELECT
-    price as car_price
-FROM
-    (
-        SELECT * FROM old_cars
-        UNION
-        SELECT * FROM new_cars
-    )
-WHERE car_price > 30000
+SELECT name, weight_kg AS weight
+FROM (
+    SELECT name, weight_kg
+    FROM bears
+    UNION ALL
+    SELECT name, weight_kg
+    FROM more_bears
+) AS combined
+WHERE weight_kg > 400
 ```
 
 </DmColumn>
 <DmColumn header="Polars" tone="violet" divider>
 
 ```py
-import polars as pl
-
-df = (
-  pl.concat(
-    pl.read_csv("old_cars.csv"),
-    pl.read_csv("new_cars.csv"),
-  )
-  .select(
-    pl.col("price").alias("car_price")
-  )
-  .filter(pl.col("car_price") > 30_000)
+heavy_bears = (
+  pl.concat([
+    bears.select("name", "weight_kg"),
+    more_bears.select("name", "weight_kg"),
+  ])
+  .rename({"weight_kg": "weight"})
+  .filter(pl.col("weight") > 400)
 )
 ```
 
 </DmColumn>
 </DmColumns>
+
+<!--
+The queries are doing the exact same thing, the operations only have different names and interfaces.
+-->
+
+---
+layout: default
+label: 3 · Expressing a query
+---
+
+# Beyond relational algebra: contexts and <span class="dm-accent">expressions</span>
+
+Polars adds its own DSL on top of the relational engine. An **expression** is a tree of operations
+describing how to build one or more Series. Expressions are always evaluated inside a **context**:
+`select`, `with_columns`, `filter` and `group_by`.
+
+```py {all|1-2|3-4|5-6|all}
+query = bears.with_columns(                              # context
+    (pl.col("weight_kg") / 1000).alias("weight_tonnes")    # expression
+).filter(                                               # context
+    pl.col("age") >= 15                                  # expression
+).select(                                               # context
+    pl.col("name"), pl.col("weight_tonnes")               # expressions
+)
+```
+
+<!--
+Two words, and both are load-bearing. An expression is a *recipe* for a Series: it knows nothing
+about which table it will run against, which is exactly why you can name it, reuse it, pass it to a
+function and unit-test it. A context is *where* the recipe is evaluated, and it decides the shape
+of what comes back.
+Click through it once, naming context and expression alternately.
+-->
+
+---
+layout: default
+label: 3 · Expressing a query
+---
+
+# One expression, four <span class="dm-accent">contexts</span>
+
+<p class="ctx-sub">The expression never changes: <code>heaviest = pl.col("weight_kg").max().alias("max_kg")</code>.
+The context decides what comes back.</p>
+
+<div class="ctx">
+  <div class="ctx-row ctx-head"><div>Context</div><div>Rows out</div><div>What you asked for</div></div>
+  <div class="ctx-row">
+    <div class="ctx-code"><code>bears.select(heaviest)</code></div>
+    <div><div class="ctx-shape">1</div></div>
+    <div class="ctx-what">One answer for the whole table: 505 kg.</div>
+  </div>
+  <div class="ctx-row">
+    <div class="ctx-code"><code>bears.with_columns(heaviest)</code></div>
+    <div><div class="ctx-shape">6</div></div>
+    <div class="ctx-what">A new max_kg column, with 505 on every row.</div>
+  </div>
+  <div class="ctx-row">
+    <div class="ctx-code"><code>bears.group_by("country").agg(heaviest)</code></div>
+    <div><div class="ctx-shape">3</div></div>
+    <div class="ctx-what">One maximum per country: CA 405, NO 480, GL 505.</div>
+  </div>
+  <div class="ctx-row">
+    <div class="ctx-code"><code>bears.filter(pl.col("weight_kg") == heaviest)</code></div>
+    <div><div class="ctx-shape">1</div></div>
+    <div class="ctx-what">Tala's row. Tied maxima would return multiple rows.</div>
+  </div>
+</div>
+
+<p class="ctx-note">You are not calling functions on data. You are handing the engine a
+<b>description</b> and a place to evaluate it.</p>
+
+---
+layout: default
+label: 3 · Expressing a query
+---
+
+# Polars comes with a big bag of <span class="dm-accent">batteries</span> included
+
+<DmColumns class="mt-4" :gap="16">
+<DmColumn header="Column selectors" tone="navy">
+
+```py
+import polars.selectors as cs
+
+bears.select(cs.numeric())
+bears.select(
+  cs.starts_with("weight")
+)
+```
+
+Meta-queries over the schema, instead of hard-coded column lists.
+
+</DmColumn>
+<DmColumn header="Type namespaces" tone="navy" divider>
+
+```py
+bears.with_columns(
+  pl.col("name")
+    .str.to_uppercase()
+)
+```
+
+Type-specific functions live in `.str`, `.dt`, `.list` and `.struct`.
+
+For date columns, `.dt.year()` extracts the year.
+
+</DmColumn>
+<DmColumn header="Testing helpers" tone="violet" divider>
+
+```py
+from polars.testing import (
+  assert_frame_equal)
+
+assert_frame_equal(
+  bears.select("name"),
+  bears.select("age"),
+)
+# AssertionError
+```
+
+Frame and series comparisons that fail with a readable message.
+
+</DmColumn>
+</DmColumns>
+
+<!--
+Three conveniences, and the first two are needed in the next thirty minutes, which is why this
+slide sits here and not later.
+-->
+
+---
+layout: statement
+title: Exercise - relational algebra
+---
+
+# Exercise time: relational algebra
+
+<p class="mt-6 text-lg opacity-80"><code>3-basic-transforms/</code></p>
+
+<!--
+Checkpoint question when they say they are done: "which of your answers would break if a vet typed
+a name in lowercase?"
+-->
 
 ---
 layout: default
@@ -404,104 +833,69 @@ label: 3 · Expressing a query
   <img src="/img/hamlet.jpg" alt="Hamlet holding a skull" style="height: 118px; border-radius: 8px" />
 </div>
 
-<!--
-A discussion about the advantages and disadvantages of SQL vs. the DataFrame API.
-
-Advantages: readable, lingua franca, powerful.
-Disadvantages: higher level abstractions are missing, not general purpose, limited support for
-software engineering practices (testing, version control, linting), which is what dbt tries to fix.
-
-In the case of Polars: there is a SQLContext, but it lags the development of the DataFrame API a
-bit. Stability should improve.
--->
-
 ---
 layout: default
 label: 3 · Expressing a query
 ---
 
-# Beyond relational algebra: contexts and <span class="dm-accent">expressions</span>
-
-Polars adds its own DSL on top of the relational engine. An **expression** is a tree of operations
-describing how to build one or more Series. Expressions are always evaluated inside a **context**:
-`select`, `with_columns`, `filter` and `group_by`.
-
-```py {all|8-9|10-11|12-13}
-df = pl.DataFrame({
-    "integer": [1, 2, 3],
-    "date": [datetime(2024, 1, 1), datetime(2024, 1, 2), datetime(2024, 1, 3)],
-    "float": [4.0, 5.0, 6.0],
-    "text": ["a", "b", "c"],
-})
-
-query = df.with_columns(                                    # context
-    (pl.col("float") * pl.col("integer")).alias("int*float")  # expression
-).filter(                                                   # context
-    pl.col("date") >= datetime(2024, 1, 2)                    # expression
-).select(                                                   # context
-    pl.all()                                                  # expression
-)
-```
-
----
-layout: default
-label: 3 · Expressing a query
----
-
-# Polars comes with a big bag of <span class="dm-accent">batteries</span> included
+# Compose a pipeline from <span class="dm-accent">small functions</span>
 
 <DmColumns class="mt-4" :gap="16">
-<DmColumn header="Column selectors" tone="navy">
+<DmColumn header="Define the transformations" tone="navy">
 
 ```py
-from polars import selectors as cs
+def clean_names(df):
+    return df.with_columns(
+        pl.col("name")
+        .str.strip_chars()
+        .str.to_lowercase()
+    )
 
-df.select(cs.contains("a"))
-df.select(cs.numeric())
+def keep_seniors(df):
+    return df.filter(pl.col("age") >= 15)
 ```
 
-Meta-queries over the schema, instead of hard-coded column lists.
+Each function returns a transformed frame, leaving its input and external state unchanged.
 
 </DmColumn>
-<DmColumn header="Type namespaces" tone="navy" divider>
+<DmColumn header="Compose them with pipe" tone="violet" divider>
 
 ```py
-df.with_columns(
-  pl.col("baz").str.to_uppercase()
-)
-df.with_columns(
-  pl.col("ts").dt.year()
+seniors = (
+    vet
+    .pipe(clean_names)
+    .pipe(keep_seniors)
 )
 ```
 
-Type-specific functions live in `.str`, `.dt`, `.list` and `.struct`.
+`df.pipe(f)` means `f(df)`.
 
-</DmColumn>
-<DmColumn header="Testing helpers" tone="violet" divider>
-
-```py
-from polars.testing import (
-  assert_frame_equal)
-
-assert_frame_equal(df1, df2)
-# AssertionError: columns
-# ['foo', 'bar', 'baz'] in left
-# DataFrame, but not in right
-```
-
-Frame and series comparisons that fail with a readable message.
+Name each step once, reuse it in other pipelines, and test it on a few rows.
 
 </DmColumn>
 </DmColumns>
 
----
-layout: statement
-title: Exercise - relational algebra
----
+<!--
+The SQL discussion just promised abstraction and testing. Show what those mean using operations
+the room already knows from exercise 3. clean_names addresses the inconsistent bear names;
+keep_seniors reuses the filter from the imperative/declarative slide.
 
-# Exercise time: relational algebra
+Read the functions first, then the pipeline. Both follow DataFrame -> DataFrame. The functions
+return their results without modifying the input or external state. That makes each one easy to
+test with a tiny input frame and assert_frame_equal, independently of the rest of the pipeline.
+Ask them to extract one transformation from their exercise answer into a function and call it
+with pipe. Keep this to a short refactor of work they already have.
 
-<p class="mt-6 text-lg opacity-80"><code>3-basic-transforms/</code></p>
+Only after the example, name the idea: this is a practical application of functional programming,
+composing small transformations without shared mutable state. pipe is a higher order function:
+it accepts another function. It calls that function once with the frame, not once per row.
+The purity comes from how we wrote these functions; pipe does not enforce it.
+
+These functions use native Polars expressions throughout. In section 4, pass a LazyFrame through
+the same functions to show that the operations still build a query plan the optimiser can see.
+
+Source: https://docs.pola.rs/api/python/stable/reference/dataframe/api/polars.DataFrame.pipe.html
+-->
 
 ---
 layout: default
@@ -514,17 +908,13 @@ label: 3 · Expressing a query
 <DmColumn header="Window: one row in, one row out" tone="navy">
 
 ```py
-import polars as pl
-
-df = (
-  pl.read_csv("cars.csv")
-  .with_columns(
-    pl.col("price")
-    .min()
-    .over("model_type")
-    .alias("price_without_options"),
-  )
+measurements.with_columns(
+  pl.col("weight")
+  .mean()
+  .over("life_stage")
+  .alias("avg_for_stage")
 )
+# 3 291 rows in, 3 291 rows out
 ```
 
 Calculate a value over a group and add it to every record of that group.
@@ -533,23 +923,52 @@ Calculate a value over a group and add it to every record of that group.
 <DmColumn header="Aggregation: one group, one row" tone="violet" divider>
 
 ```py
-import polars as pl
-
-df = (
-  pl.read_csv("cars.csv")
-  .group_by("model_type")
-  .agg(
-    pl.col("price")
-    .min()
-    .alias("price_without_options"),
-  )
+measurements.group_by("life_stage").agg(
+  pl.col("weight")
+  .mean()
+  .alias("avg_for_stage")
 )
+# 3 291 rows in, 4 rows out
 ```
 
 Calculate a value over a group and return one record per group.
 
 </DmColumn>
 </DmColumns>
+
+<p class="win-note">Same expression, same grouping. The <b>context</b> decides whether you keep
+your rows.</p>
+
+---
+layout: default
+label: 3 · Expressing a query
+---
+
+# Aggregations that return a <span class="dm-accent">row</span>, not a value
+
+```py
+# the whole latest reading per bear, not just the latest timestamp
+measurements.group_by("name").agg(pl.all().sort_by("timestamp").last())
+
+# which bear was most active, per life stage per year
+measurements.group_by("life_stage", pl.col("timestamp").dt.year().alias("year")).agg(
+    pl.col("name").sort_by("daily_steps").last().alias("most_active"),
+    pl.col("daily_steps").max(),
+)
+
+# an ordered window: no .sort() beforehand, the window sorts itself
+measurements.with_columns(
+    pl.col("weight").rolling_mean(window_size=3).over("name", order_by="timestamp")
+)
+```
+
+<p class="win-note"><code>sort_by</code> inside an aggregation is the answer to "<b>which</b> one",
+and <code>order_by</code> is what makes a window trustworthy.</p>
+
+<!--
+You can mention the importance of sort_by/order_by when making aggregations to make sure output
+of the transformation is deterministic and not random.
+-->
 
 ---
 layout: statement
@@ -582,18 +1001,25 @@ label: 3 · Expressing a query
 DataFrame.join(
     other: DataFrame,
     on: str | Expr | Sequence[str | Expr] | None = None,
-    how: JoinStrategy = 'inner',
+    how: JoinStrategy = 'inner',        # left, right, full, semi, anti, cross
     *,
     left_on: str | Expr | Sequence[str | Expr] | None = None,
     right_on: str | Expr | Sequence[str | Expr] | None = None,
-    suffix: str = '_right',
-    validate: JoinValidation = 'm:m',
+    suffix: str = '_right',             # what happens to colliding column names
+    validate: JoinValidation = 'm:m',   # 1:1, 1:m, m:1
     join_nulls: bool = False,
     coalesce: bool | None = None,
 ) -> DataFrame
 ```
 
-`validate` is worth remembering: it turns a silent row explosion into an error.
+```py
+sensor.join(vet, on="name")               # 158 016 x 3 291 -> 90 475 536 rows
+sensor.join(vet, on="name", validate="m:1")
+# ComputeError: join keys did not fulfill m:1 validation
+```
+
+<p class="win-note"><code>validate</code> turns a silent row explosion into an error. It costs one
+argument and it is the cheapest test in this course.</p>
 
 ---
 layout: default
@@ -603,24 +1029,21 @@ label: 3 · Expressing a query
 # ... and even <span class="dm-accent">non-standard</span> joins
 
 ```py
-DataFrame.join_asof(
-    other: DataFrame,
-    left_on: str | None | Expr = None,
-    right_on: str | None | Expr = None,
-    on: str | None | Expr = None,
-    by_left: str | Sequence[str] | None = None,
-    by_right: str | Sequence[str] | None = None,
-    by: str | Sequence[str] | None = None,
-    strategy: AsofJoinStrategy = 'backward',
-    suffix: str = '_right',
-    tolerance: str | int | float | timedelta | None = None,
-    allow_parallel: bool = True,
-    force_parallel: bool = False,
-) -> DataFrame
+sensor.join_asof(
+    measurements.select("name", "timestamp", "vet_health_check"),
+    on="timestamp",              # both sides must be sorted on this
+    by="name",                   # exact match on the bear, nearest match on the time
+    strategy="backward",         # the most recent verdict at or before the reading
+    tolerance="7d",              # beyond this, null instead of a stale answer
+)
+# 158 016 rows in, 158 016 rows out
 ```
 
 Match on the nearest key rather than an exact one. Useful for time series: sensor readings joined
 to the most recent configuration change.
+
+<p class="win-note"><code>join_where</code> is the general case: join on any predicate, not just
+equality.</p>
 
 ---
 layout: statement
@@ -661,6 +1084,7 @@ Nothing runs until `.collect()`. The optimiser sees the whole query and rewrites
 </DmColumn>
 </DmColumns>
 
+
 ---
 layout: default
 label: 4 · How the engine executes it
@@ -673,9 +1097,10 @@ label: 4 · How the engine executes it
 
 - **Predicate pushdown**: filter rows as early as possible
 - **Projection pushdown**: drop columns as early as possible
-- **Query pushdown**: push filters, joins and aggregations into the data source
+- **Slice pushdown**: read only the rows a `head` or `slice` actually needs
 
-Typically applied while reading the data, so the rows never enter memory at all.
+Applied while reading the data. Parquet stores min/max statistics per row group, so the engine
+skips whole groups and those rows never enter memory at all.
 
 </DmColumn>
 <DmColumn divider>
@@ -700,6 +1125,13 @@ label: 4 · How the engine executes it
 
 <p class="text-center mt-2 opacity-80">Same three inputs, same result, 6 million intermediate rows of difference.</p>
 
+<!--
+Simply decides which branch of the joins to execute first. No facny reordering
+
+[Sources]
+- https://docs.pola.rs/user-guide/lazy/optimizations/
+-->
+
 ---
 layout: default
 label: 4 · How the engine executes it
@@ -720,14 +1152,18 @@ q1 = (
     .group_by("brand")
     .agg(pl.col("max_speed").max())
 )
-df = q1.collect(streaming=True)
+df = q1.collect(engine="streaming")
 ```
 
 </DmColumn>
-<DmColumn header="Supported operations" tone="navy" divider>
+<DmColumn header="What streams" tone="navy" divider>
 
-`filter`, `slice`, `head`, `tail`, `with_columns`, `select`, `group_by`, `join`, `unique`, `sort`,
-`explode`, `melt`, `scan_csv`, `scan_parquet`, `scan_ipc`
+Most of the API streams: `scan_csv`, `scan_parquet`, `scan_ipc`, `select`, `with_columns`,
+`filter`, `slice`, `group_by`, `join`, `unique`, `sort`, `explode`, `unpivot`.
+
+Anything that cannot stream falls back to the in-memory engine on its own, so a query never fails
+for this reason. To see which part does what:
+`show_graph(plan_stage="physical", engine="streaming")`.
 
 </DmColumn>
 </DmColumns>
@@ -803,8 +1239,8 @@ One value at a time. Pass `return_dtype` or Polars infers it from the first resu
 </DmColumn>
 </DmColumns>
 
-<p style="margin-top: 32px;">Every UDF drops out of the optimised engine and back into the Python
-interpreter, so check for a builtin first.</p>
+<p style="margin-top: 32px;">Every UDF drops out of the optimised engine and back into the Python interpreter, so check for a builtin first.</p>
+
 
 ---
 layout: statement

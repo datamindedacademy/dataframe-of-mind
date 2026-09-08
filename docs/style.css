@@ -59,30 +59,104 @@
   overflow: visible;
 }
 
-/* --------------------------------------------------------------------------
-   "Whether or when" page: the schema-on-read / schema-on-write drawing with the
-   trade-off and an example database on either side, as on slide 8 of the original.
-   -------------------------------------------------------------------------- */
-.schema {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  margin-top: 20px;
+/* A schema turns an anonymous record into named, typed fields.
+   The default layout centres what follows the title, so these blocks need no
+   nudging of their own. */
+.meaning-flow { text-align: center; }
+.meaning-raw span {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--dm-premium);
+  opacity: 0.65;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
-.schema-side {
-  flex: 0 0 190px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 18px;
+.meaning-raw code {
+  display: inline-block;
+  padding: 12px 22px;
+  border-radius: 6px;
+  background: var(--dm-surface);
+  color: var(--dm-premium);
+  font-size: 21px;
+}
+.meaning-arrow {
+  margin: 7px 0;
+  color: var(--dm-connecting);
+  font-size: 14px;
+  font-weight: 650;
+}
+.meaning-arrow b { display: block; font-size: 25px; line-height: 1; }
+.meaning-fields {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  border-top: 3px solid var(--dm-connecting);
+  border-bottom: 1px solid #d7d7e0;
+}
+.meaning-fields > div {
+  padding: 9px 7px 10px;
+  border-right: 1px solid #d7d7e0;
+}
+.meaning-fields > div:last-child { border-right: 0; }
+.meaning-fields span,
+.meaning-fields small { display: block; }
+.meaning-fields span { color: var(--dm-connecting); font-weight: 700; font-size: 14px; }
+.meaning-fields strong { display: block; margin: 4px 0 2px; font-size: 19px; }
+.meaning-fields small { font-size: 11px; opacity: 0.55; }
+.meaning-punch,
+.dataframe-punch {
+  margin: 20px 0 0 !important;
   text-align: center;
+  color: var(--dm-premium);
+  font-size: 18px;
 }
-.schema-icon { height: 66px; }
-.schema-logo { max-width: 150px; max-height: 54px; object-fit: contain; }
-.schema-diagram { flex: 1 1 auto; max-height: 330px; object-fit: contain; }
+.meaning-punch b { color: var(--dm-connecting); }
 
-/* Format logo strips under the extract / load columns (slide 15 of the original). */
+/* The same schema becomes the header of the DataFrame learners will query. */
+.dataframe-figure { margin-top: 0; }
+.dataframe-example {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  text-align: center;
+  font-size: 15px;
+}
+.dataframe-example > div {
+  padding: 7px 5px;
+  border-bottom: 1px solid #dedee6;
+}
+.dataframe-example .dataframe-head {
+  padding: 7px 5px 8px;
+  border-bottom: 2px solid var(--dm-premium);
+  color: var(--dm-premium);
+  font-weight: 700;
+}
+.dataframe-head small {
+  display: block;
+  color: var(--dm-connecting);
+  font-size: 10px;
+  font-weight: 600;
+}
+.dataframe-example > div:nth-child(6n + 4) { background: rgba(84, 62, 220, 0.12); }
+.dataframe-example .dataframe-row-hit {
+  background: rgba(8, 6, 53, 0.08);
+  font-weight: 650;
+}
+.dataframe-example .dataframe-row-hit:nth-child(6n + 4) {
+  background: rgba(84, 62, 220, 0.26);
+  color: var(--dm-connecting);
+}
+.dataframe-legend {
+  display: flex;
+  justify-content: center;
+  gap: 48px;
+  margin-top: 15px;
+  font-size: 14px;
+}
+.dataframe-row-key b { color: var(--dm-premium); }
+.dataframe-column-key b { color: var(--dm-connecting); }
+.dataframe-punch { margin-top: 14px !important; font-weight: 650; }
+
+/* Format examples connect physical layout and schema handling. */
 .fmt-logos {
   display: flex;
   align-items: center;
@@ -91,10 +165,116 @@
   flex-wrap: wrap;
 }
 .fmt-logos img { height: 30px; width: auto; object-fit: contain; }
+.fmt-logos--center { justify-content: center; }
+.format-punch {
+  margin: 22px 0 0 !important;
+  text-align: center;
+  color: var(--dm-premium);
+  font-size: 18px;
+  font-weight: 650;
+}
 
-/* The punchline that lands on the last click of the schema build. */
-.schema-punch { text-align: center; margin-top: 24px; font-size: 20px; }
 .ova-caption { text-align: center; margin-top: 20px; }
+
+/* --------------------------------------------------------------------------
+   Row vs. column storage: the same deliberately ragged CSV-like values laid
+   out by record and by field. Navy follows one record; violet follows one field.
+   -------------------------------------------------------------------------- */
+.storage-compare {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 52px minmax(0, 1fr);
+  gap: 22px;
+  align-items: stretch;
+  margin-top: 8px;
+}
+.storage-format-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.storage-format-head strong {
+  font-family: 'El Messiri', ui-serif, Georgia, serif;
+  font-size: 22px;
+  color: var(--dm-premium);
+}
+.storage-format--columns .storage-format-head strong { color: var(--dm-connecting); }
+.storage-format-head span { font-size: 13px; opacity: 0.68; }
+.storage-file {
+  background: #f7f7fa;
+  border: 1px solid #e1e1e8;
+  border-radius: 7px;
+  padding: 11px 13px 13px;
+  overflow: hidden;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 14px;
+  line-height: 1.8;
+  white-space: nowrap;
+}
+.storage-line {
+  margin: 0 -5px;
+  padding: 0 5px;
+  border-radius: 3px;
+}
+.storage-line--header {
+  color: var(--dm-premium);
+  opacity: 0.52;
+  font-size: 12px;
+  border-bottom: 1px solid #d7d7e0;
+  border-radius: 0;
+  margin-bottom: 5px;
+}
+.storage-record-run {
+  background: rgba(8, 6, 53, 0.10);
+  box-shadow: inset 4px 0 0 var(--dm-premium);
+  font-weight: 650;
+}
+.storage-field-run {
+  background: rgba(84, 62, 220, 0.13);
+  box-shadow: inset 4px 0 0 var(--dm-connecting);
+  color: var(--dm-connecting);
+  font-weight: 700;
+}
+.storage-question {
+  margin: 10px 0 0 !important;
+  text-align: center;
+  font-size: 16px;
+}
+.storage-format--rows .storage-question b { color: var(--dm-premium); }
+.storage-format--columns .storage-question b { color: var(--dm-connecting); }
+.storage-divider {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.storage-divider::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 50%;
+  border-left: 1px dashed rgba(84, 62, 220, 0.45);
+}
+.storage-divider span {
+  position: relative;
+  z-index: 1;
+  background: #fff;
+  padding: 8px 2px;
+  color: var(--dm-connecting);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  writing-mode: vertical-rl;
+}
+.storage-punch {
+  margin: 12px 0 0 !important;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 650;
+  color: var(--dm-premium);
+}
 
 /* Six agenda rows have to fit on one page; the theme's default row height fits five. */
 .dm-agenda-body ol > li {
@@ -107,3 +287,119 @@
 .dm-recap li { margin-bottom: 10px; padding-left: 4px; }
 .dm-recap ul { list-style: disc; padding-left: 22px; margin-top: 6px; }
 .dm-recap ul li { margin-bottom: 4px; font-size: 17px; }
+
+/* --------------------------------------------------------------------------
+   Section 2, the engines: the closing line under the ETL diagram and the
+   comparison grid, and the question the three dialects all answer.
+   -------------------------------------------------------------------------- */
+.engine-punch {
+  margin: 18px 0 0 !important;
+  text-align: center;
+  color: var(--dm-premium);
+  font-size: 18px;
+  font-weight: 650;
+}
+.engine-punch b { color: var(--dm-connecting); }
+
+.engine-question {
+  margin: 8px 0 0 !important;
+  text-align: center;
+  color: var(--dm-premium);
+  font-size: 16px;
+  opacity: 0.75;
+}
+
+/* Three rows of short prose sit comfortably at the grid's own size; only the
+   row labels need to come down, so "Reach for it when" stays on one line. */
+.engine-cmp .dm-cmp-rowlabel { font-size: 13px !important; line-height: 1.3; }
+
+/* ===========================================================================
+   Section 3 (Expressing a query) additions.
+   Append to docs/style.css and restart the dev server: style.css is loaded
+   once at startup and hot reload does not pick it up.
+
+   Only the "One expression, four contexts" slide needs new structure. The rest
+   is three small shared helpers for the closing lines on the windowing,
+   aggregation, union and join slides.
+   =========================================================================== */
+
+/* --- Shared: sub-line under a title, and the closing punch line ----------- */
+.ctx-sub {
+  margin: 7px 0 0;
+  font-size: 15px;
+  opacity: 0.75;
+}
+.ctx-note,
+.win-note,
+.union-warn {
+  margin-top: 16px;
+  font-size: 15.5px;
+  text-align: center;
+}
+.ctx-note b,
+.win-note b {
+  color: var(--dm-connecting);
+}
+.ctx-sub code,
+.win-note code,
+.union-warn code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 13.5px;
+  background: var(--dm-authentic);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+.union-warn {
+  margin-top: 12px;
+  font-size: 14.5px;
+  opacity: 0.85;
+}
+
+/* --- One expression, four contexts ---------------------------------------- */
+.ctx {
+  margin-top: 18px;
+  border: 1px solid #e1e1e8;
+  border-radius: 9px;
+  overflow: hidden;
+}
+.ctx-row {
+  display: grid;
+  grid-template-columns: 47% 12% 41%; /* % so every row resolves identically */
+  align-items: center;
+  border-bottom: 1px solid #ececf2;
+}
+.ctx-row:last-child {
+  border-bottom: 0;
+}
+.ctx-row.ctx-head {
+  background: #efeffa;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.62;
+  font-weight: 600;
+}
+.ctx-row.ctx-head > div {
+  padding: 6px 14px;
+}
+.ctx-row > div {
+  padding: 9px 14px;
+}
+.ctx-code code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 13px;
+  color: var(--dm-connecting);
+}
+.ctx-shape {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 13px;
+  text-align: center;
+  background: var(--dm-authentic);
+  border-radius: 5px;
+  padding: 3px 0;
+  font-weight: 600;
+}
+.ctx-what {
+  font-size: 13.5px;
+  opacity: 0.78;
+}
