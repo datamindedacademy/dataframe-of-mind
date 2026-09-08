@@ -80,7 +80,7 @@ operational system grabs a whole record: this customer, this order, right now. A
 grabs one field over millions of records: every order value of the past year. That single difference
 drives everything downstream, from the file format to the engine.
 
-Third click: during operations we capture the richness of reality, details of every event, so the
+During operations we capture the richness of reality, details of every event, so the
 business keeps running and customers are served well. Afterwards we understand the patterns hidden
 in the chaos, and leverage them to serve customers better, which keeps the business alive.
 -->
@@ -104,15 +104,15 @@ label: 1 · Data and schemas
       <div class="storage-line">1042,Nanook,480,15,54,NO</div>
       <div class="storage-line">73,Pipaluk,320,9,68,GL</div>
       <div class="storage-line storage-record-run">615,Siku,405,12,61,CA</div>
-      <div class="storage-line">204,Nuka,260,6,72,US</div>
-      <div class="storage-line">981,Tala,505,18,52,RU</div>
+      <div class="storage-line">204,Nuka,260,6,72,NO</div>
+      <div class="storage-line">981,Tala,505,18,52,GL</div>
     </div>
     <p class="storage-question">Give me record <b>615</b></p>
   </div>
 
-  <div class="storage-divider"><span>same data</span></div>
+  <div class="storage-divider" v-click="1"><span>same data</span></div>
 
-  <div class="storage-format storage-format--columns">
+  <div class="storage-format storage-format--columns" v-click="1">
     <div class="storage-format-head">
       <strong>Column-oriented</strong>
       <span>one line per field</span>
@@ -124,7 +124,7 @@ label: 1 · Data and schemas
       <div class="storage-line">weight_kg,210,480,320,405,260,505</div>
       <div class="storage-line storage-field-run">age,4,15,9,12,6,18</div>
       <div class="storage-line">heart_rate,76,54,68,61,72,52</div>
-      <div class="storage-line">country,CA,NO,GL,CA,US,RU</div>
+      <div class="storage-line">country,CA,NO,GL,CA,NO,GL</div>
     </div>
     <p class="storage-question">Give me the highest <b>age</b></p>
   </div>
@@ -271,6 +271,18 @@ label: 1 · Data and schemas
     <div>12</div>
     <div>61</div>
     <div>CA</div>
+    <div>204</div>
+    <div>Nuka</div>
+    <div>260</div>
+    <div>6</div>
+    <div>72</div>
+    <div>NO</div>
+    <div>981</div>
+    <div>Tala</div>
+    <div>505</div>
+    <div>18</div>
+    <div>52</div>
+    <div>GL</div>
   </div>
   <div class="dataframe-legend">
     <span class="dataframe-row-key"><b>Row</b> · one complete record</span>
@@ -393,7 +405,7 @@ adults = df[df["age"] >= 4]
 
 ```sql
 SELECT name, avg(heart_rate)
-FROM 'measurements.parquet'
+FROM 'bears.parquet'
 WHERE age >= 4
 GROUP BY name
 ```
@@ -402,13 +414,12 @@ GROUP BY name
 <DmColumn header="🐻‍❄️ Polars" tone="violet" divider>
 
 ```py
-(pl.scan_parquet(path)
+pl.read_parquet(path)
   .filter(pl.col("age") >= 4)
   .group_by("name")
   .agg(
     pl.col("heart_rate").mean()
   )
-  .collect())
 ```
 
 </DmColumn>
@@ -421,9 +432,6 @@ Three things to point at. pandas mutates and re-binds: `adults` is a new object,
 mask is a separate expression from the column it filters. DuckDB is pure SQL over a file, with no
 Python object in sight. Polars reads as one pipeline, and `pl.col("age")` is not a value but a
 description of a column that the engine will resolve later.
-
-Note `scan_parquet` and `collect` in the Polars version. Nothing happens until `collect` is called.
-Do not explain why yet, just plant it: that is section 4.
 -->
 
 ---
@@ -486,7 +494,8 @@ pl.read_csv(
 
 <p class="text-sm opacity-80">Full argument list: <a href="https://docs.pola.rs/api/python/stable/reference/api/polars.read_csv.html" target="_blank">docs.pola.rs · read_csv</a></p>
 
-A CSV may name its columns, never their <span class="dm-accent">types</span>. Since Polars works with DataFrames, you will need to help it understanding the schema.
+<p class="ova-caption" v-click="1">A CSV may name its columns, never their <span class="dm-accent">types</span>. Since Polars works with DataFrames, you will need to help it understanding the schema.</p>
+
 
 <!--
 Look at the defaults, they are the whole story. `has_header=True` assumes a header. `separator=','`
@@ -497,9 +506,6 @@ replace a guess with a decision.
 The failure mode to name out loud: a wrong guess does not raise. The read succeeds, the column is a
 String instead of a date or a number, and nobody notices until a join returns nothing. So the habit
 is to look at `df.schema` before you look at the data.
-
-Do not walk through a worked example. They should discover which arguments their two files need,
-and the error messages on the way are worth more than a solution on a slide.
 -->
 
 ---
@@ -513,15 +519,10 @@ title: Demo - reading a dirty csv
 
 <!--
 Two files, both deliberately awful, and no README hand-holding: they have the arguments from the
-previous slide and the docs, and that is the point. Let them hit the error messages. Polars error
-messages are unusually good, and reading one properly is a skill worth ten minutes of frustration.
+previous slide and the docs. Let them hit the error messages.
 
 The checkpoint question when they say they are done: "is every column the type you want?" Most
 people stop at "it read without an error" and leave numbers and timestamps sitting as strings.
-
-Note for the instructor: `demo-reading-data/` is about scan versus read against object storage,
-which is lazy evaluation and I/O pushdown. That is section 4 material and it lands better next to
-the hive partitioning demo. Consider running only `2-csv-from-hell/` here.
 -->
 
 ---
@@ -533,84 +534,67 @@ layout: section
 <!--
 Section 2 left them with three engines and one sentence: all three hand you the same DataFrame,
 what differs is how you ask for it. This section is about the asking.
-
-Say the framing out loud once, because pandas and DuckDB are about to disappear: they were the
-alternatives, this is a Polars course. Every idea in this section (styles, relational algebra,
-windows, joins) is engine-independent; only the spelling is Polars. Nobody should spend the
-afternoon waiting for pandas to come back.
-
-One more thing to state now and not repeat: everything here uses the eager API, `read_parquet` and
-a DataFrame you can print. Section 2 showed `scan_parquet` and `collect` and promised an
-explanation. It is still coming in section 4. Eager first is deliberate: they should see what the
-operations do before they see the engine reordering them.
-
-Time box: this is the longest section of the day, roughly 45 minutes of slides and three
-exercise blocks of 30 to 40 minutes each.
 -->
+
 
 ---
 layout: default
 label: 3 · Expressing a query
 ---
 
-# Imperative, declarative and <span class="dm-accent">functional</span> styles
+# Imperative and <span class="dm-accent">declarative</span> query styles
 
 <DmColumns class="mt-4" :gap="16">
-<DmColumn header="Imperative" tone="navy">
+<DmColumn header="Imperative Python" tone="navy" style="flex: 1 1 0">
 
 ```py
 seniors = []
+rows = bears.iter_rows(named=True)
 for row in rows:
   if row["age"] >= 15:
     seniors.append(row)
 ```
 
-Step by step, like a recipe.
+The loop fixes the iteration order and mutates the result.
 
 </DmColumn>
-<DmColumn header="Declarative" tone="navy" divider>
+<DmColumn header="Declarative" tone="violet" divider style="flex: 2 1 0">
+
+<DmColumns :gap="16">
+<DmColumn header="SQL text" tone="plain">
 
 ```sql
-SELECT name, weight
-FROM batch_measurements
+SELECT *
+FROM bears
 WHERE age >= 15
 ```
 
-Describe what you want, let an optimised engine work out how.
+The query describes the result. The engine chooses an execution plan.
 
 </DmColumn>
-<DmColumn header="Functional" tone="violet" divider>
+<DmColumn header="Polars expressions" tone="plain" divider>
 
 ```py
-vet = pl.read_parquet(path)
-seniors = vet.filter(
-  pl.col("age") >= 15
-)
+senior = pl.col("age") >= 15
+seniors = bears.filter(senior)
 ```
 
-Chain functions into a pipeline, no duplication, no mutation.
+Describe the filter using a Python expression.
 
 </DmColumn>
 </DmColumns>
+</DmColumn>
+</DmColumns>
+
+<p class="mt-4">With declarative queries, you describe the transformation; the engine handles the row processing.</p>
 
 <!--
-Exercise: split into three groups, write the same transformation logic in each style, compare the
-results and discuss readability.
+The point to land is not that one syntax wins. Imperative code specifies the procedure, including
+iteration order and mutation. SQL and Polars expressions describe a result without spelling out a
+row-by-row procedure. That distinction gives an engine room to optimise the work it can see.
 
-If the room is large or the day is tight, run it as five minutes of discussion instead of three
-groups: ask which version tells you the *intent* fastest, and which one you could still read after
-six months. Do not let it run longer, the real practice starts at exercise 3.
-
-The point to land is not that one style wins. It is that only the imperative version specifies
-*order*. The other two describe a result, which is exactly the freedom section 4 spends its whole
-time exploiting: if you never said "loop over the rows once, in this order", the engine is allowed
-to filter before it reads, or reorder the joins. Style is not decoration, it is what makes
-optimisation legal.
-
-The functional column is the odd one out and someone will notice: it is declarative too. The
-difference is that SQL hands the description to a parser as text, while Polars builds it out of
-Python objects you can name, pass around and test. That distinction is the whole SQL debate later
-in this section, so just plant it.
+SQL supplies a declarative description as text. Polars supplies expression objects in Python.
+`senior` can be named, reused and composed with other expressions, but it is not itself a function.
 -->
 
 ---
@@ -629,24 +613,9 @@ label: 3 · Expressing a query
 <!--
 Voilà, summarised in a single slide.
 
-Walk the operators by what they do to the *shape* of the table rather than by their symbols. It is
-the fastest way to hold the whole family in your head, and it is the frame the next slide pays off:
-selection and projection shrink the table, one takes rows and the other takes columns; rename leaves
-the shape alone; union and join grow it, again one in each direction. Five shape changes, and every
-query they write today is a sequence of them.
-
-"Closed" is the word worth a sentence. The output of every operator is another relation, which is
-why they compose without end and why a query plan is a tree rather than a list. It is also why the
-next slide can put SQL and Polars side by side at all: both are surface syntax over these same
-operations, so learning one transfers to the other.
-
-Two honest gaps to name if the room is paying attention. Aggregation is not in classical relational
-algebra, it was added later, and it gets two slides of its own further down. And SQL's `WHERE` is
-selection while SQL's `SELECT` is *projection*, which is a genuinely unfortunate naming collision.
-Say it once here and it saves confusion at exercise 3.
-
-Nobody needs to write sigma by hand. They need to recognise the five shapes in someone else's
-pipeline.
+Not spend much time on this. The message is that no matter which interface you use to transform data,
+in the end you're doing relational algebra, which is well studied and adopted. We'll see some
+of these operations in the next slides, with polars syntax.
 -->
 
 ---
@@ -656,76 +625,42 @@ label: 3 · Expressing a query
 
 # Project, filter, rename, <span class="dm-accent">union</span>
 
+`more_bears` contains additional bears with the same columns as `bears`.
+
 <DmColumns class="mt-3" :gap="16">
 <DmColumn header="SQL" tone="navy">
 
 ```sql
-SELECT name, timestamp,
-       temperature AS temp_c
+SELECT name, weight_kg AS weight
 FROM (
-    SELECT name, timestamp,
-           temperature
-    FROM sensor
+    SELECT name, weight_kg
+    FROM bears
     UNION ALL
-    SELECT name, timestamp,
-           NULL AS temperature
-    FROM vet
-)
-WHERE temperature > 40
+    SELECT name, weight_kg
+    FROM more_bears
+) AS combined
+WHERE weight_kg > 400
 ```
 
 </DmColumn>
 <DmColumn header="Polars" tone="violet" divider>
 
 ```py
-readings = (
-  pl.concat(
-    [                        # a list, not *args
-      sensor.select(
-        "name", "timestamp", "temperature"),
-      vet.select("name", "timestamp"),
-    ],
-    how="diagonal",          # gaps become null
-  )
-  .rename({"temperature": "temp_c"})
-  .filter(pl.col("temp_c") > 40)
+heavy_bears = (
+  pl.concat([
+    bears.select("name", "weight_kg"),
+    more_bears.select("name", "weight_kg"),
+  ])
+  .rename({"weight_kg": "weight"})
+  .filter(pl.col("weight") > 400)
 )
 ```
 
 </DmColumn>
 </DmColumns>
 
-<p class="union-warn"><code>UNION</code> deduplicates, <code>pl.concat</code> does not.
-<code>UNION ALL</code> is the honest translation.</p>
-
 <!--
-The operators from the previous slide, on the two tables they are about to use. `sensor` is
-measurements.parquet, one row per hour per bear; `vet` is batch_measurements.parquet, one row per
-visit. Different schemas on purpose.
-
-`pl.col` appears here for the first time in this section, and it is explained on the next slide.
-Do not stop to define it: say that it names a column the engine will resolve later, exactly as
-section 2 promised, and that the next slide is about what that really means. If you define it here
-you will end up giving the contexts talk twice.
-
-Three things to point at.
-
-First, `pl.concat` takes a *list*. `pl.concat(a, b)` raises `TypeError: concat() takes 1 positional
-argument but 2 were given`. It is the most common first mistake with unions and worth showing live
-so they recognise the message.
-
-Second, `how="diagonal"`. The default is `"vertical"` and it requires identical schemas, which
-these tables do not have. Diagonal takes the union of the columns and fills the gaps with null. It
-is the setup for exercise 3's third question: stack sensor readings against vet verdicts, then
-`forward_fill` the verdict down the readings that follow it. Do not solve that here, just make sure
-they know the option exists.
-
-Third, the footnote. SQL `UNION` removes duplicate rows, `pl.concat` keeps everything. On a toy
-three-plus-three example that is 3 rows against 4. If you want the SQL behaviour you add
-`.unique()`, and you should ask yourself why you are deduplicating measurements at all.
-
-Worth naming: `rename` renames the frame's columns, `alias` renames what an expression produces.
-Same operator, two places, and the error from confusing them is not obvious.
+The queries are doing the exact same thing, the operations only have different names and interfaces.
 -->
 
 ---
@@ -739,37 +674,22 @@ Polars adds its own DSL on top of the relational engine. An **expression** is a 
 describing how to build one or more Series. Expressions are always evaluated inside a **context**:
 `select`, `with_columns`, `filter` and `group_by`.
 
-```py {all|1|3-4|5-6|7-8}
-vet = pl.read_parquet("data/batch_measurements.parquet")
-
-query = vet.with_columns(                                   # context
-    (pl.col("weight") / pl.col("age")).alias("kg_per_year")   # expression
-).filter(                                                   # context
-    pl.col("life_stage") == "SENIOR"                          # expression
-).select(                                                   # context
-    pl.col("name"), pl.col("kg_per_year").round(1)            # expression
+```py {all|1-2|3-4|5-6|all}
+query = bears.with_columns(                              # context
+    (pl.col("weight_kg") / 1000).alias("weight_tonnes")    # expression
+).filter(                                               # context
+    pl.col("age") >= 15                                  # expression
+).select(                                               # context
+    pl.col("name"), pl.col("weight_tonnes")               # expressions
 )
 ```
 
 <!--
-This is the slide that makes the rest of the Polars API predictable, so do not rush it. They have
-just seen `pl.col` used twice on the previous slide without an explanation, and section 2 planted
-the sentence: `pl.col("age")` is not a value, it is a description of a column the engine resolves
-later. Here is the machinery behind it.
-
 Two words, and both are load-bearing. An expression is a *recipe* for a Series: it knows nothing
 about which table it will run against, which is exactly why you can name it, reuse it, pass it to a
 function and unit-test it. A context is *where* the recipe is evaluated, and it decides the shape
 of what comes back.
-
-Click through it once, naming context and expression alternately. Then make the point that matters:
-`pl.col("weight") / pl.col("age")` on its own is a legal Python object. Type it in the notebook
-without a frame around it and it prints a description, not a number. Nothing has touched the data
-yet.
-
-The habit this buys them: when a query does not do what they expect, the first question is not "is
-my expression wrong" but "which context am I in". Wrong context is the more common mistake by a wide
-margin, and the next slide is why.
+Click through it once, naming context and expression alternately.
 -->
 
 ---
@@ -779,53 +699,35 @@ label: 3 · Expressing a query
 
 # One expression, four <span class="dm-accent">contexts</span>
 
-<p class="ctx-sub">The expression never changes: <code>heaviest = pl.col("weight").max()</code>.
+<p class="ctx-sub">The expression never changes: <code>heaviest = pl.col("weight_kg").max().alias("max_kg")</code>.
 The context decides what comes back.</p>
 
 <div class="ctx">
   <div class="ctx-row ctx-head"><div>Context</div><div>Rows out</div><div>What you asked for</div></div>
   <div class="ctx-row">
-    <div class="ctx-code"><code>vet.select(heaviest)</code></div>
+    <div class="ctx-code"><code>bears.select(heaviest)</code></div>
     <div><div class="ctx-shape">1</div></div>
-    <div class="ctx-what">One answer for the whole table.</div>
+    <div class="ctx-what">One answer for the whole table: 505 kg.</div>
   </div>
   <div class="ctx-row">
-    <div class="ctx-code"><code>vet.with_columns(heaviest)</code></div>
-    <div><div class="ctx-shape">3 291</div></div>
-    <div class="ctx-what">The same answer stapled onto every row, ready to compare against.</div>
+    <div class="ctx-code"><code>bears.with_columns(heaviest)</code></div>
+    <div><div class="ctx-shape">6</div></div>
+    <div class="ctx-what">A new max_kg column, with 505 on every row.</div>
   </div>
   <div class="ctx-row">
-    <div class="ctx-code"><code>vet.group_by("life_stage").agg(heaviest)</code></div>
-    <div><div class="ctx-shape">4</div></div>
-    <div class="ctx-what">One answer per group.</div>
+    <div class="ctx-code"><code>bears.group_by("country").agg(heaviest)</code></div>
+    <div><div class="ctx-shape">3</div></div>
+    <div class="ctx-what">One maximum per country: CA 405, NO 480, GL 505.</div>
   </div>
   <div class="ctx-row">
-    <div class="ctx-code"><code>vet.filter(pl.col("weight") == heaviest)</code></div>
+    <div class="ctx-code"><code>bears.filter(pl.col("weight_kg") == heaviest)</code></div>
     <div><div class="ctx-shape">1</div></div>
-    <div class="ctx-what">The row that holds the answer, not the value.</div>
+    <div class="ctx-what">Tala's row. Tied maxima would return multiple rows.</div>
   </div>
 </div>
 
 <p class="ctx-note">You are not calling functions on data. You are handing the engine a
 <b>description</b> and a place to evaluate it.</p>
-
-<!--
-Assign `heaviest = pl.col("weight").max()` in the notebook first, then run the four lines. Seeing
-the same variable produce 1, 3 291, 4 and 1 rows does more for their intuition than any diagram.
-The numbers are real: 3 291 is the row count of batch_measurements.parquet.
-
-Row four is the one to dwell on. `filter` is where an aggregate stops being a summary and becomes a
-predicate, and it is how you answer "which bear", not "what weight". Half of exercise 4 is that
-move. If they take one thing from this slide, it is that the answer to "which X had the highest Y"
-is a filter or a sort, never a `max()` on its own.
-
-Row two is the window function, before it has a name. Two slides after the exercise, `.over()` will
-look inevitable rather than new: `with_columns` already broadcasts one answer across every row, and
-`.over()` just says which rows share an answer.
-
-If someone asks whether `select` and `with_columns` differ in anything but width: no. Same context,
-same rules, one drops the columns you did not mention and the other keeps them.
--->
 
 ---
 layout: default
@@ -840,8 +742,10 @@ label: 3 · Expressing a query
 ```py
 import polars.selectors as cs
 
-vet.select(cs.numeric())
-vet.select(cs.starts_with("vet"))
+bears.select(cs.numeric())
+bears.select(
+  cs.starts_with("weight")
+)
 ```
 
 Meta-queries over the schema, instead of hard-coded column lists.
@@ -850,17 +754,15 @@ Meta-queries over the schema, instead of hard-coded column lists.
 <DmColumn header="Type namespaces" tone="navy" divider>
 
 ```py
-vet.with_columns(
+bears.with_columns(
   pl.col("name")
-    .str.to_titlecase()
-)
-vet.with_columns(
-  pl.col("timestamp")
-    .dt.year()
+    .str.to_uppercase()
 )
 ```
 
 Type-specific functions live in `.str`, `.dt`, `.list` and `.struct`.
+
+For date columns, `.dt.year()` extracts the year.
 
 </DmColumn>
 <DmColumn header="Testing helpers" tone="violet" divider>
@@ -869,10 +771,11 @@ Type-specific functions live in `.str`, `.dt`, `.list` and `.struct`.
 from polars.testing import (
   assert_frame_equal)
 
-assert_frame_equal(df1, df2)
-# AssertionError: columns
-# ['foo', 'bar', 'baz'] in left
-# DataFrame, but not in right
+assert_frame_equal(
+  bears.select("name"),
+  bears.select("age"),
+)
+# AssertionError
 ```
 
 Frame and series comparisons that fail with a readable message.
@@ -883,25 +786,6 @@ Frame and series comparisons that fail with a readable message.
 <!--
 Three conveniences, and the first two are needed in the next thirty minutes, which is why this
 slide sits here and not later.
-
-Selectors are how you avoid writing column names three times. `cs.numeric()` on the vet table
-resolves to vet, age, weight and daily_steps; `cs.starts_with("vet")` to vet and vet_health_check.
-They resolve against the schema at plan time, so a query written with selectors survives a new
-column appearing upstream. Combine them with `&`, `|` and `-` if someone asks.
-
-The namespaces are the half that matters for exercise 3. One of the questions is "how many times
-was Blizzard Bob's name capitalized", and the vets in the generated data really do shout the names,
-some of them half the time. `.str` is where that lives. Show `vet.select(pl.col("name").unique())`
-and let them see it: twelve distinct names for six bears. The surprise is the lesson, and it is
-about to bite them in every group_by on `name`.
-
-Testing helpers are the third column and they are not needed until much later, so keep them to one
-sentence here: this is the answer to "how would you test this", and the readable failure message is
-the point. Flag it forward, because after exercise 3 there is a slide arguing that testing is where
-a DataFrame API beats SQL, and this is the evidence for it.
-
-If they ask where the full list of namespace methods is: docs.pola.rs, expressions reference. Do
-not read it out.
 -->
 
 ---
@@ -914,17 +798,6 @@ title: Exercise - relational algebra
 <p class="mt-6 text-lg opacity-80"><code>3-basic-transforms/</code></p>
 
 <!--
-Run `uv run python 3-basic-transforms/generate_parquet.py` first, and check that everybody has
-files in `data/`. The later exercises use the same files.
-
-Three questions, and the third one (Chilly Willy, temperature above 40) is much harder than it
-looks because the temperature and the verdict live in different tables at different frequencies.
-The hint in the README says union and downfill; the diagonal concat slide is what they need.
-
-The README also asks them to redo the questions in Polars' SQL dialect. Push for it, at least on
-one question, because the next slide is the SQL debate and it is a much better discussion when
-everybody has just felt both sides.
-
 Checkpoint question when they say they are done: "which of your answers would break if a vet typed
 a name in lowercase?"
 -->
@@ -960,39 +833,68 @@ label: 3 · Expressing a query
   <img src="/img/hamlet.jpg" alt="Hamlet holding a skull" style="height: 118px; border-radius: 8px" />
 </div>
 
+---
+layout: default
+label: 3 · Expressing a query
+---
+
+# Compose a pipeline from <span class="dm-accent">small functions</span>
+
+<DmColumns class="mt-4" :gap="16">
+<DmColumn header="Define the transformations" tone="navy">
+
+```py
+def clean_names(df):
+    return df.with_columns(
+        pl.col("name")
+        .str.strip_chars()
+        .str.to_lowercase()
+    )
+
+def keep_seniors(df):
+    return df.filter(pl.col("age") >= 15)
+```
+
+Each function returns a transformed frame, leaving its input and external state unchanged.
+
+</DmColumn>
+<DmColumn header="Compose them with pipe" tone="violet" divider>
+
+```py
+seniors = (
+    vet
+    .pipe(clean_names)
+    .pipe(keep_seniors)
+)
+```
+
+`df.pipe(f)` means `f(df)`.
+
+Name each step once, reuse it in other pipelines, and test it on a few rows.
+
+</DmColumn>
+</DmColumns>
+
 <!--
-A discussion about the advantages and disadvantages of SQL vs. the DataFrame API.
+The SQL discussion just promised abstraction and testing. Show what those mean using operations
+the room already knows from exercise 3. clean_names addresses the inconsistent bear names;
+keep_seniors reuses the filter from the imperative/declarative slide.
 
-Advantages: readable, lingua franca, powerful.
-Disadvantages: higher level abstractions are missing, not general purpose, limited support for
-software engineering practices (testing, version control, linting), which is what dbt tries to fix.
+Read the functions first, then the pipeline. Both follow DataFrame -> DataFrame. The functions
+return their results without modifying the input or external state. That makes each one easy to
+test with a tiny input frame and assert_frame_equal, independently of the rest of the pipeline.
+Ask them to extract one transformation from their exercise answer into a function and call it
+with pipe. Keep this to a short refactor of work they already have.
 
-In the case of Polars: there is a SQLContext, but it lags the development of the DataFrame API a
-bit. Stability should improve.
+Only after the example, name the idea: this is a practical application of functional programming,
+composing small transformations without shared mutable state. pipe is a higher order function:
+it accepts another function. It calls that function once with the frame, not once per row.
+The purity comes from how we wrote these functions; pipe does not enforce it.
 
-This slide used to sit before exercise 3. It is here now because the argument only means something
-once they have written both, and they just did. Open with the question rather than the answer: who
-found the SQL version shorter, and who found it harder to debug?
+These functions use native Polars expressions throughout. In section 4, pass a LazyFrame through
+the same functions to show that the operations still build a query plan the optimiser can see.
 
-Two things to demo in the notebook rather than put on the slide, because both are one line and both
-answer an objection you will get.
-
-  pl.sql("SELECT life_stage, count(*) AS n FROM vet GROUP BY life_stage").collect()
-
-That works with no registration step: `pl.sql` reads frames straight out of the local scope. The SQL
-door is always open, and mixing the two in one pipeline is normal rather than a compromise.
-
-  assert_frame_equal(got, expected)
-
-from the batteries slide is the "Testing" bullet made concrete. There is no equivalent for a
-200-line SQL model, which is exactly the hole dbt exists to fill.
-
-Where this lands in practice: SQL for the analyst-facing layer where the query *is* the
-specification, a DataFrame API where the transformation is a piece of software with tests, a version
-and a maintainer. Both, usually, in the same codebase.
-
-If nobody argues, take the SQL side yourself for a minute. A room full of engineers will under-rate
-readability, and the person who inherits their pipeline will not.
+Source: https://docs.pola.rs/api/python/stable/reference/dataframe/api/polars.DataFrame.pipe.html
 -->
 
 ---
@@ -1006,7 +908,7 @@ label: 3 · Expressing a query
 <DmColumn header="Window: one row in, one row out" tone="navy">
 
 ```py
-vet.with_columns(
+measurements.with_columns(
   pl.col("weight")
   .mean()
   .over("life_stage")
@@ -1021,7 +923,7 @@ Calculate a value over a group and add it to every record of that group.
 <DmColumn header="Aggregation: one group, one row" tone="violet" divider>
 
 ```py
-vet.group_by("life_stage").agg(
+measurements.group_by("life_stage").agg(
   pl.col("weight")
   .mean()
   .alias("avg_for_stage")
@@ -1037,24 +939,6 @@ Calculate a value over a group and return one record per group.
 <p class="win-note">Same expression, same grouping. The <b>context</b> decides whether you keep
 your rows.</p>
 
-<!--
-This is the four-contexts slide again, with a grouping key. Say that out loud, it turns two new
-functions into one idea they already have: `with_columns` broadcasts, `agg` collapses, and `.over()`
-is just how you tell `with_columns` which rows share an answer.
-
-The row counts are the whole slide. Put them on the board: 3 291 in, 3 291 out on the left; 3 291
-in, 4 out on the right.
-
-When to reach for which: a window when the answer is a *property of the row's context* that you
-want to keep comparing against ("is this bear heavier than average for its life stage"), an
-aggregation when the group itself is the unit of your answer ("what is the average weight per life
-stage"). If they need both, window first, then filter, and they have never lost a row they might
-want.
-
-Note for the room that has SQL: `.over()` is `OVER (PARTITION BY ...)`, and yes, an aggregation
-inside `with_columns` without `.over()` partitions by nothing, which is the whole table.
--->
-
 ---
 layout: default
 label: 3 · Expressing a query
@@ -1064,16 +948,16 @@ label: 3 · Expressing a query
 
 ```py
 # the whole latest reading per bear, not just the latest timestamp
-vet.group_by("name").agg(pl.all().sort_by("timestamp").last())
+measurements.group_by("name").agg(pl.all().sort_by("timestamp").last())
 
 # which bear was most active, per life stage per year
-vet.group_by("life_stage", pl.col("timestamp").dt.year().alias("year")).agg(
+measurements.group_by("life_stage", pl.col("timestamp").dt.year().alias("year")).agg(
     pl.col("name").sort_by("daily_steps").last().alias("most_active"),
     pl.col("daily_steps").max(),
 )
 
 # an ordered window: no .sort() beforehand, the window sorts itself
-vet.with_columns(
+measurements.with_columns(
     pl.col("weight").rolling_mean(window_size=3).over("name", order_by="timestamp")
 )
 ```
@@ -1082,26 +966,8 @@ vet.with_columns(
 and <code>order_by</code> is what makes a window trustworthy.</p>
 
 <!--
-New slide, and it exists because exercise 4 asks for things the previous slide does not teach.
-Every question in that exercise is one of these three shapes.
-
-`pl.all().sort_by("timestamp").last()` is the argmax idiom, and it is worth spelling out why it
-works: inside `agg` every column is a list per group, `sort_by` reorders those lists together, and
-`last` takes one element from each. That is how you get the *row* that holds the maximum instead of
-the maximum itself. `pl.col("name").sort_by("daily_steps").last()` is the same trick asking a
-different column for its answer.
-
-Two grouping keys on the second one, and the second key is an expression rather than a column name.
-That is legal anywhere a key is accepted, and it saves a `with_columns` just to make a year column.
-
-The third snippet is the one people get wrong in production. `rolling_mean` walks rows in the order
-they happen to be in, so a rolling window over an unsorted frame quietly returns nonsense. Passing
-`order_by` inside `.over()` makes the ordering part of the query instead of a `.sort()` somebody can
-delete three months later. Show the difference if there is time: the same expression with and
-without `order_by` on the unsorted frame gives different answers, and neither raises.
-
-Mention `top_k` and `bottom_k` for "the three heaviest", and `arg_max` for people coming from NumPy,
-but do not put them on the slide. The three idioms above cover the exercise.
+You can mention the importance of sort_by/order_by when making aggregations to make sure output
+of the transformation is deterministic and not random.
 -->
 
 ---
@@ -1113,21 +979,6 @@ title: Exercise - windowing and aggregations
 
 <p class="mt-6 text-lg opacity-80"><code>4-window-aggregations/</code></p>
 
-<!--
-The hardest exercise of the day. Question by question: first and last measurement is a plain `agg`,
-most active per lifestage per year is the `sort_by().last()` idiom with two keys, heaviest per year
-is the same shape again, and the fireworks question needs a window (group average) and then a filter
-against it.
-
-The diabetes bonus question is a rolling mean with a threshold, and it is genuinely hard: a
-three-day-or-longer run of daily averages above 200 means aggregating to daily first, then a rolling
-window, then finding consecutive runs. Offer it only to people who finished early, and be ready to
-say that finding runs is usually done with a cumulative sum over a boolean.
-
-If the room is stuck on the same thing, stop them and do it together on the projector. It is cheaper
-than fifteen people failing in parallel.
--->
-
 ---
 layout: default
 label: 3 · Expressing a query
@@ -1138,29 +989,6 @@ label: 3 · Expressing a query
 <div class="flex justify-center mt-2">
   <img src="/img/sql-joins.png" alt="SQL join types as Venn diagrams" style="height: 340px" />
 </div>
-
-<!--
-Walk the four pictures by which *keys* survive: inner keeps the keys on both sides, left keeps every
-key on the left and pads the rest with nulls, right is the mirror, full keeps everything.
-
-Then say what the circles cannot tell you, because it is the thing that breaks people, and the next
-slide is the fix. The diagrams model sets of keys, and a table is not a set of keys: it is rows, and
-a key can appear many times. So the picture tells you which keys come out, never how many rows.
-
-Do the arithmetic out loud on a three-by-three example. Two rows for Chilly Willy on the left, two
-on the right, and every left row pairs with every right row: four rows out of three and three. Peter
-Panda has no match on the right and Icy Ingrid has none on the left, so both vanish. Rows out is the
-sum over each key of left count times right count, and the only way to predict it is to know whether
-your keys are unique. Neither circle in the picture is drawn with a multiplicity.
-
-Two members of the family are missing from the diagram and both are on the next slide: semi keeps
-the left rows that have a match without adding any columns, and anti keeps the left rows that have
-none. Exercise 5 needs anti, and reaching for it instead of a left join plus a null check is the
-difference between a query that reads like the question and one that does not.
-
-The habit to leave them with: before you join, say out loud how many rows you expect. If you cannot,
-you do not yet know whether your keys are unique.
--->
 
 ---
 layout: default
@@ -1193,34 +1021,6 @@ sensor.join(vet, on="name", validate="m:1")
 <p class="win-note"><code>validate</code> turns a silent row explosion into an error. It costs one
 argument and it is the cheapest test in this course.</p>
 
-<!--
-The signature slide, but the two arguments to actually talk about are `validate` and `suffix`.
-
-Start with the number in the first snippet, because it is the previous slide's arithmetic on the
-real tables. 158 016 sensor readings joined to 3 291 vet visits on `name` is 90 475 536 rows,
-because `name` is not a key in either table: six bears, thousands of rows each. This is not a
-contrived example, it is the naive first attempt at exercise 5, and on a laptop it is how you find
-out your kernel had a memory limit.
-
-`validate` is an assertion about your keys and it fires before any of those rows are produced. The
-default `m:m` means "no promises", which is the setting the explosion happens under. Writing `m:1`
-says out loud that you expect at most one row per key on the right, and Polars checks it:
-`ComputeError: join keys did not fulfill m:1 validation`. That message is worth an hour of
-debugging. Make them add it to a join during the exercise.
-
-`suffix` is the boring one that costs real time. `dim_vet` has a `name` column and so does
-`batch_measurements`, so a join on `vet` silently hands you `name_right`, and every downstream
-reference to `name` now means the bear when you meant the vet. Set `suffix="_vet"` and the confusion
-is gone. Show `.columns` after the join, always.
-
-`coalesce` is worth one sentence if someone asks about the key column appearing twice on a full
-join. `join_nulls` is worth one too: null is not equal to null, so by default null keys do not
-match, which is almost always what you want.
-
-`how="cross"` exists and produces every pair. It has real uses, and it is also what a join on the
-wrong key feels like.
--->
-
 ---
 layout: default
 label: 3 · Expressing a query
@@ -1230,7 +1030,7 @@ label: 3 · Expressing a query
 
 ```py
 sensor.join_asof(
-    vet.select("name", "timestamp", "vet_health_check"),
+    measurements.select("name", "timestamp", "vet_health_check"),
     on="timestamp",              # both sides must be sorted on this
     by="name",                   # exact match on the bear, nearest match on the time
     strategy="backward",         # the most recent verdict at or before the reading
@@ -1245,28 +1045,6 @@ to the most recent configuration change.
 <p class="win-note"><code>join_where</code> is the general case: join on any predicate, not just
 equality.</p>
 
-<!--
-The row count is the point, and it is the contrast with the previous slide. The same two tables that
-explode to 90 million rows under an equality join on `name` come back at exactly 158 016 rows here,
-one per sensor reading, because asof asks for the *nearest* match rather than every match. Whenever
-a join is exploding, the question to ask is whether the intent was actually "the most recent".
-
-Three arguments carry the meaning. `by` is the exact part, `on` is the fuzzy part, and mixing them
-up gives you nonsense quietly. `strategy="backward"` means at or before, which is what you want for
-"what did we know at the time"; forward would let a future vet visit explain a past reading, and
-that is how you leak the answer into a training set. `tolerance` is the guard: without it, a reading
-from 2024 will happily inherit a verdict from 2020.
-
-Both sides must be sorted on the `on` column. If you pass `by`, Polars cannot check the sortedness
-for you and warns about it, so sort explicitly and do not rely on the file's order.
-
-`join_where` is newer and takes arbitrary predicates, which is the honest general case: an equality
-join is the one shape fast enough to have its own algorithm. It is also easy to make accidentally
-quadratic, so mention it and move on.
-
-Exercise 5's last question (lowest bear-to-visitor ratio) is the one that wants this slide.
--->
-
 ---
 layout: statement
 title: Exercise - joins
@@ -1275,19 +1053,6 @@ title: Exercise - joins
 # Exercise time: joins
 
 <p class="mt-6 text-lg opacity-80"><code>5-joins/</code></p>
-
-<!--
-Four questions, and each one is a different join shape on purpose: the practice question is a plain
-inner join plus a filter, the 99.9th percentile question is an anti join, the capitalization
-question is a group_by on the vet dimension, and the visitor ratio question wants join_asof.
-
-Two things to watch for. Somebody will join `measurements` to `batch_measurements` on `name` and
-lose their kernel; that is the number from two slides ago happening to them, so let it happen once
-and then point at it. And everybody will hit the `name` collision between the bears and the vets,
-so `suffix` earns its slide here.
-
-Checkpoint question: "did you predict the row count before you ran the join, and were you right?"
--->
 
 ---
 layout: section
@@ -1318,6 +1083,7 @@ Nothing runs until `.collect()`. The optimiser sees the whole query and rewrites
 
 </DmColumn>
 </DmColumns>
+
 
 ---
 layout: default
@@ -1360,10 +1126,7 @@ label: 4 · How the engine executes it
 <p class="text-center mt-2 opacity-80">Same three inputs, same result, 6 million intermediate rows of difference.</p>
 
 <!--
-Keep the claim the size it is. Polars lists join ordering among its optimisations, but what it does
-is estimate which branch to execute first so the smaller intermediate result is the one it has to
-hold. It is not a database-style cost-based rewrite of the whole join tree driven by table
-statistics, so do not promise that any join order you write will be fixed for you.
+Simply decides which branch of the joins to execute first. No facny reordering
 
 [Sources]
 - https://docs.pola.rs/user-guide/lazy/optimizations/
@@ -1476,8 +1239,8 @@ One value at a time. Pass `return_dtype` or Polars infers it from the first resu
 </DmColumn>
 </DmColumns>
 
-<p style="margin-top: 32px;">Every UDF drops out of the optimised engine and back into the Python
-interpreter, so check for a builtin first.</p>
+<p style="margin-top: 32px;">Every UDF drops out of the optimised engine and back into the Python interpreter, so check for a builtin first.</p>
+
 
 ---
 layout: statement
